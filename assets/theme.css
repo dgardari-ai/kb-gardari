@@ -1,0 +1,63 @@
+/* Светлый настраиваемый вариант v1.0. Derived from variant.json; colors only. */
+.kb-light {
+  --kb-canvas: #FFFFFF;
+  --kb-ink: #202124;
+  --kb-body: #565C62;
+  --kb-accent: #D8C62A;
+  --kb-secondary: #B8D8F0;
+  --kb-footer: #FFFFFF;
+  background: var(--kb-canvas);
+  color: var(--kb-ink);
+}
+.kb-light .kb-section[data-tone="graphite"] {
+  --kb-section-bg: #202124;
+  --kb-section-ink: #F8F9FA;
+  --kb-section-body: #D1D6D9;
+  --kb-section-rule: #939598;
+  --kb-inactive-bg: transparent;
+  --kb-active-line: #D8C62A;
+  --kb-secondary-edge: none;
+}
+.kb-light .kb-section[data-tone="medium"] {
+  --kb-section-bg: #A8ADB2;
+  --kb-section-ink: #202124;
+  --kb-section-body: #3C4043;
+  --kb-section-rule: #565C62;
+  --kb-inactive-bg: transparent;
+  --kb-active-line: #D8C62A;
+  --kb-secondary-edge: none;
+}
+.kb-light .kb-section[data-tone="yellow"] {
+  --kb-section-bg: #D8C62A;
+  --kb-section-ink: #202124;
+  --kb-section-body: #202124;
+  --kb-section-rule: #565C62;
+  --kb-inactive-bg: #FFFFFF;
+  --kb-active-line: #202124;
+  --kb-secondary-edge: inset 0 0 0 1px #202124;
+}
+.kb-light .kb-section[data-tone="lightgray"] {
+  --kb-section-bg: #ECEEEF;
+  --kb-section-ink: #202124;
+  --kb-section-body: #565C62;
+  --kb-section-rule: #A6ABB1;
+  --kb-inactive-bg: transparent;
+  --kb-active-line: #D8C62A;
+  --kb-secondary-edge: none;
+}
+.kb-light .kb-section[data-tone="almost"] {
+  --kb-section-bg: #F8F9FA;
+  --kb-section-ink: #202124;
+  --kb-section-body: #565C62;
+  --kb-section-rule: #A6ABB1;
+  --kb-inactive-bg: transparent;
+  --kb-active-line: #D8C62A;
+  --kb-secondary-edge: none;
+}
+.kb-light .kb-section { background: var(--kb-section-bg, #F8F9FA); color: var(--kb-section-ink, #202124); }
+.kb-light .kb-section .kb-body { color: var(--kb-section-body, #565C62); }
+.kb-light .kb-primary { background: var(--kb-accent); color: var(--kb-ink); }
+.kb-light .kb-secondary { background: var(--kb-secondary); color: var(--kb-ink); box-shadow: var(--kb-secondary-edge, none); }
+.kb-light .kb-number, .kb-light .kb-marker { background: var(--kb-inactive-bg, transparent); color: var(--kb-section-ink, #202124); border-color: var(--kb-section-rule, #A6ABB1); }
+.kb-light .kb-number[aria-pressed="true"], .kb-light .kb-marker[data-selected="true"] { background: var(--kb-accent); color: var(--kb-ink); border-color: var(--kb-active-line, #202124); }
+.kb-light .kb-footer { background: var(--kb-footer); color: var(--kb-ink); }
