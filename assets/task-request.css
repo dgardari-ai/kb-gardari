@@ -6,6 +6,8 @@
 .task-request-dialog .dialog-close{flex:none}
 .task-request-dialog .dialog-content{padding-bottom:40px}
 .task-request-dialog h2{font-size:clamp(34px,4vw,52px)}
+.task-request-dialog .task-request-context{margin:0 0 24px;padding:14px 16px;border-left:3px solid var(--ink);background:#f1f2f3;color:var(--ink);font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+.task-request-context[hidden],.task-request-telegram[hidden]{display:none}
 .task-request-form{display:grid;gap:12px}
 .task-request-form label{font-size:18px;font-weight:700}
 .task-request-form textarea{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:160px;resize:vertical;padding:16px;border:1px solid var(--line);border-radius:8px;background:#f8f9fa;color:var(--ink);font:18px/1.5 Arial,Helvetica,sans-serif}
@@ -19,4 +21,11 @@
 .task-request-channels .task-channel>span{font-size:inherit;line-height:1.35;transform:none;transition:none}
 .task-request-channels .task-channel .task-channel-address{font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:400;line-height:1.35;letter-spacing:0;text-transform:none;overflow-wrap:anywhere}
 .task-request-channels .task-channel:disabled{opacity:1;border-color:#aeb2b7;background:#f1f2f3;color:#62666c;cursor:not-allowed}
+.task-request-telegram{display:grid;gap:12px;margin-top:12px;padding-top:24px;border-top:1px solid var(--line);min-width:0}
+.task-request-telegram textarea{min-height:140px;font-size:16px;line-height:1.5}
+.task-request-telegram .task-request-hint{margin:0}
+.task-request-telegram-actions{display:flex;flex-wrap:wrap;gap:10px}
+.task-request-telegram-actions .button{min-height:44px;white-space:normal;text-align:left;font-size:12px}
+.task-request-form .task-request-copy-status{margin:0;color:var(--body);font-size:15px;line-height:1.5}
+.task-request-copy-status:empty{display:none}
 @media(max-width:700px){.task-request-trigger{margin-top:20px;font-size:12px;padding:16px;gap:14px}.task-request-dialog{width:calc(100% - 20px)}.task-request-dialog .dialog-top{gap:12px}.task-request-dialog .dialog-top .eyebrow{font-size:10px}.task-request-dialog .dialog-content{padding-bottom:28px}.task-request-form textarea{font-size:16px}.task-request-channels{grid-template-columns:1fr}.task-request-channels .task-channel{min-height:66px;padding:13px 16px;gap:3px}}

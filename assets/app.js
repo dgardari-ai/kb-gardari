@@ -144,39 +144,36 @@
   dialog.addEventListener('click',event=>{if(event.target===dialog){const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close()}});
   dialog.addEventListener('close',()=>{if(origin)origin.focus({preventScroll:true})});
 
-  const requestDialog=document.getElementById('request-dialog'),requestForm=document.getElementById('request-form');
-  const requestText=document.getElementById('request-text'),requestMode=document.getElementById('request-mode');
-  let requestOrigin=null;
-  document.querySelectorAll('[data-open-request]').forEach(button=>button.addEventListener('click',()=>{
-    requestOrigin=button;
-    const card=button.closest('.participation-card');
-    requestMode.textContent=card.dataset.address+' · '+card.querySelector('h3').textContent.trim();
-    requestDialog.showModal();requestDialog.scrollTop=0;requestText.focus({preventScroll:true});
-  }));
-  requestText.addEventListener('input',()=>requestText.setCustomValidity(''));
-  requestForm.addEventListener('submit',event=>{
-    const text=requestText.value.trim();
-    if(!text){event.preventDefault();requestText.setCustomValidity('Напишите несколько слов о вашей задаче.');requestText.reportValidity();return}
-    // A native GET opens a draft in the named chat. Only the visitor sends it.
-    document.getElementById('request-message').value='Запрос в КБ Гардари\n'+requestMode.textContent+'\n\n'+text;
-  });
-  requestDialog.querySelector('.dialog-close').addEventListener('click',()=>requestDialog.close());
-  requestDialog.addEventListener('click',event=>{if(event.target===requestDialog){const b=requestDialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)requestDialog.close()}});
-  requestDialog.addEventListener('close',()=>{if(requestOrigin)requestOrigin.focus({preventScroll:true})});
 })();
 
-// Author disclosure follows the actual edited title metrics, including wrapped names.
+// Match the visible body of lowercase letters, not the center of the line box.
 (() => {
   const people = [...document.querySelectorAll('.author-person')];
+  const context = document.createElement('canvas').getContext('2d');
   const align = () => people.forEach(person => {
     const title = person.querySelector('.author-name');
-    if (title) person.style.setProperty('--author-title-center', `${title.offsetTop + title.offsetHeight / 2}px`);
+    if (!title) return;
+    const style = getComputedStyle(title);
+    let opticalOffset = parseFloat(style.fontSize) * .08;
+    if (context) {
+      context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      context.textBaseline = 'alphabetic';
+      // The Cyrillic body letter excludes descenders in names such as «Трохин».
+      const metrics = context.measureText('н');
+      const measured = (metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent
+        - metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) / 2;
+      if (Number.isFinite(measured)) opticalOffset = measured;
+    }
+    person.style.setProperty('--author-title-center',
+      `${title.offsetTop + title.offsetHeight / 2 + opticalOffset}px`);
   });
   if ('ResizeObserver' in window) {
     const observer = new ResizeObserver(align);
     people.forEach(person => observer.observe(person.querySelector('.author-name')));
   }
   window.addEventListener('resize', align, { passive: true });
+  document.addEventListener('kb:editor-mode', align);
   document.fonts.ready.then(align);
+  document.fonts.addEventListener('loadingdone', align);
   align();
 })();
