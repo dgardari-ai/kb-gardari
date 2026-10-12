@@ -103,9 +103,15 @@
   const dialog=document.getElementById('detail-dialog'),title=document.getElementById('detail-title'),body=document.getElementById('detail-body'),kind=document.getElementById('detail-kind');
   const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let origin=null;
-  function showDialog(trigger,label,heading,html){origin=trigger;kind.textContent=label;title.textContent=heading.replace(/\.+\s*$/,'');body.innerHTML=html;dialog.showModal();dialog.scrollTop=0;dialog.querySelector('.dialog-close').focus()}
+  function showDialog(trigger,label,heading,html,precedent=false){origin=trigger;kind.textContent=label;title.textContent=heading.replace(/\.+\s*$/,'');body.innerHTML=html;dialog.classList.toggle('precedent-detail',precedent);dialog.showModal();dialog.scrollTop=0;dialog.querySelector('.dialog-close').focus()}
   document.querySelectorAll('[data-open-case]').forEach(button=>button.addEventListener('click',()=>{const c=data.cases.find(x=>x.id===button.dataset.openCase);if(!c)return;const paragraphs=c.detailParagraphs.map(p=>'<p>'+escape(p)+'</p>').join('');const facts='<div class="dialog-facts">'+c.detailFacts.map(f=>'<div><h3>'+escape(f.label)+'</h3><p>'+escape(f.text)+'</p></div>').join('')+'</div>';showDialog(button,data.labels.caseKind+' · '+c.number,c.detailTitle,paragraphs+facts+'<p class="dialog-model-note">'+escape(data.labels.caseNote)+'</p>')}));
   document.querySelector('[data-open-method]').addEventListener('click',event=>{const m=data.method;if(!m)return;const paragraphs=m.paragraphs.map(p=>'<p>'+escape(p)+'</p>').join('');const facts='<div class="dialog-facts">'+m.facts.map(f=>'<div><h3>'+escape(f.label)+'</h3><p>'+escape(f.text)+'</p></div>').join('')+'</div>';showDialog(event.currentTarget,document.getElementById('bureau').dataset.address+' · '+m.kind,m.title,paragraphs+facts+'<p class="dialog-model-note">'+escape(m.note)+'</p>')});
+  document.querySelectorAll('[data-open-precedent]').forEach(button=>button.addEventListener('click',()=>{
+    const item=data.precedents.find(p=>p.id===button.dataset.openPrecedent);if(!item)return;
+    const paragraphs=item.paragraphs.map(p=>'<p>'+escape(p)+'</p>').join('');
+    const sources='<div class="precedent-sources" aria-label="Источники">'+item.sources.filter(source=>/^https:\/\//.test(source.url)).map(source=>'<a href="'+escape(source.url)+'" target="_blank" rel="noopener noreferrer">'+escape(source.label)+'</a>').join('')+'</div>';
+    showDialog(button,button.closest('.precedent-card').dataset.address+' · '+item.category,item.question,paragraphs+sources,true);
+  }));
   dialog.querySelectorAll('.dialog-close').forEach(button=>button.addEventListener('click',()=>dialog.close()));
   dialog.addEventListener('click',event=>{if(event.target===dialog){const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close()}});
   dialog.addEventListener('close',()=>{if(origin)origin.focus({preventScroll:true})});
