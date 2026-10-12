@@ -1,0 +1,27 @@
+/* Expandable participation points and a request prepared for a Telegram chat. */
+.terminal-log li.terminal-detail-row{display:block;padding:0}
+.terminal-detail summary{display:grid;grid-template-columns:18px minmax(0,1fr);padding:10px 0;cursor:pointer;list-style:none}
+.terminal-detail summary::-webkit-details-marker{display:none}
+.terminal-detail summary:hover{color:var(--terminal-strong)}
+.terminal-detail summary:focus-visible,.terminal-request:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:3px}
+.terminal-detail[open] .terminal-log-pointer .chevron{transform:rotate(90deg);color:var(--accent)}
+.terminal-detail .terminal-description{font-size:14px;line-height:1.55;color:var(--terminal-muted);margin:0;padding:0 0 14px 18px}
+.terminal-log li.terminal-request-row{display:block;padding:0;background:none;border:0}
+.terminal-request{display:grid;grid-template-columns:minmax(0,1fr) 18px;align-items:center;gap:8px;width:100%;min-height:52px;padding:12px;background:var(--terminal-raised);color:var(--terminal-strong);border:1px solid var(--terminal-frame);border-radius:8px;font:inherit;text-transform:none;text-align:left;letter-spacing:normal;cursor:pointer}
+.terminal-request:hover{border-color:var(--accent)}
+.terminal-request:hover .terminal-log-pointer{color:var(--accent)}
+.terminal-request .terminal-log-copy{min-width:0;overflow-wrap:anywhere}
+.request-dialog .dialog-top{align-items:flex-start}
+.request-dialog .dialog-top .eyebrow{margin:10px 0;font-size:12px}
+.request-dialog .dialog-top .dialog-close{flex-shrink:0}
+.request-dialog .dialog-content{padding-bottom:38px}
+.request-dialog h2{margin-bottom:20px}
+.request-dialog .request-mode{font-size:18px;line-height:1.4;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.request-form{display:grid;gap:12px}
+.request-form label{font-size:18px;font-weight:700}
+.request-form textarea{display:block;box-sizing:border-box;width:100%;min-height:180px;resize:vertical;padding:16px;border:1px solid var(--line);border-radius:8px;background:#f8f9fa;color:var(--ink);font:18px/1.5 Arial,Helvetica,sans-serif}
+.request-form textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.request-form .request-hint{font-size:15px;line-height:1.5;margin:0 0 8px;color:var(--body)}
+.request-form .request-hint a{color:inherit;text-underline-offset:3px}
+.request-form .button{justify-self:start;max-width:100%;white-space:normal;text-align:left}
+@media(max-width:700px){.request-dialog .dialog-content{padding-bottom:24px}.request-dialog .dialog-top{gap:10px}.request-dialog .dialog-top .eyebrow{font-size:10px}.request-dialog .request-mode{font-size:17px}.request-form .button{font-size:12px;padding:16px}.request-form textarea{font-size:16px}}

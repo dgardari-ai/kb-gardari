@@ -2,6 +2,7 @@
   'use strict';
   const data=window.KB_CONTENT;
   if(!data)return;
+  data.cases.forEach(item=>{const card=document.getElementById('example-'+item.id);if(card)item.number=card.dataset.address});
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const menuButton=document.querySelector('.menu-toggle'),menu=document.querySelector('#mobile-menu');
   function closeMenu(){menu.hidden=true;menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Открыть меню')}
@@ -23,6 +24,7 @@
     function readingTop(card){return section.dataset.stackMode==='stack'?parseFloat(card.style.getPropertyValue('--flow-header-top')):null}
     function configure(){
       section.dataset.stackMode='static';
+      section.dataset.asideOverflow=String(aside.getBoundingClientRect().height>innerHeight-headerTop()-12);
       if(reduced.matches||innerWidth<=1024)return;
       // Measure normal flow before pinning headers and bodies as independent layers.
       let rail=headerTop(),offset=0;
@@ -102,9 +104,29 @@
   const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let origin=null;
   function showDialog(trigger,label,heading,html){origin=trigger;kind.textContent=label;title.textContent=heading.replace(/\.+\s*$/,'');body.innerHTML=html;dialog.showModal();dialog.scrollTop=0;dialog.querySelector('.dialog-close').focus()}
-  document.querySelectorAll('[data-open-case]').forEach(button=>button.addEventListener('click',()=>{const c=data.cases.find(x=>x.id===button.dataset.openCase);if(!c)return;const paragraphs=c.detailParagraphs.map(p=>'<p>'+escape(p)+'</p>').join('');const facts='<div class="dialog-facts">'+c.detailFacts.map(f=>'<div><h3>'+escape(f.label)+'</h3><p>'+escape(f.text)+'</p></div>').join('')+'</div>';showDialog(button,'Модельная ситуация · '+c.number,c.detailTitle,paragraphs+facts+'<p class="dialog-model-note">Пример объясняет возможное поручение и способ разработки. Это модельная ситуация, а не выполненный заказ КБ.</p>')}));
-  document.querySelector('[data-open-method]').addEventListener('click',event=>showDialog(event.currentTarget,'0.3 · Подход бюро','Проект как целое.','<p>У проекта может быть много профессионально выполненных частей — и не быть собственного устройства. Концептуальная архитектура связывает назначение, содержание, образ, человеческие сценарии, технологию и хозяйство в общее основание решений.</p><p>Исследование и создание идут вместе. Образ способен открыть направление, расчёт — породить новый ход, сценарная проба — изменить постановку. Задача состоит в том, чтобы найденное выдержало встречу с реальностью и могло направлять дальнейшую работу.</p><div class="dialog-facts"><div><h3>Что существенно</h3><p>Назначение и связи, без которых проект перестаёт быть самим собой. Они должны сохраняться при разработке отдельных частей.</p></div><div><h3>Что можно менять</h3><p>Конкретное воплощение, материал, технология или инструмент — если изменение сохраняет замысел и необходимое действие.</p></div><div><h3>Как проверить</h3><p>На фактах, материальной пробе, человеческом сценарии, технической возможности и хозяйственном расчёте.</p></div><div><h3>Как продолжать</h3><p>Из концепта разворачиваются самостоятельные задания. Участники понимают основания и могут принимать решения, не изобретая целое заново.</p></div></div><p class="dialog-model-note">Глубина разработки и участие бюро определяются конкретным поручением.</p>'));
+  document.querySelectorAll('[data-open-case]').forEach(button=>button.addEventListener('click',()=>{const c=data.cases.find(x=>x.id===button.dataset.openCase);if(!c)return;const paragraphs=c.detailParagraphs.map(p=>'<p>'+escape(p)+'</p>').join('');const facts='<div class="dialog-facts">'+c.detailFacts.map(f=>'<div><h3>'+escape(f.label)+'</h3><p>'+escape(f.text)+'</p></div>').join('')+'</div>';showDialog(button,data.labels.caseKind+' · '+c.number,c.detailTitle,paragraphs+facts+'<p class="dialog-model-note">'+escape(data.labels.caseNote)+'</p>')}));
+  document.querySelector('[data-open-method]').addEventListener('click',event=>{const m=data.method;if(!m)return;const paragraphs=m.paragraphs.map(p=>'<p>'+escape(p)+'</p>').join('');const facts='<div class="dialog-facts">'+m.facts.map(f=>'<div><h3>'+escape(f.label)+'</h3><p>'+escape(f.text)+'</p></div>').join('')+'</div>';showDialog(event.currentTarget,document.getElementById('bureau').dataset.address+' · '+m.kind,m.title,paragraphs+facts+'<p class="dialog-model-note">'+escape(m.note)+'</p>')});
   dialog.querySelectorAll('.dialog-close').forEach(button=>button.addEventListener('click',()=>dialog.close()));
   dialog.addEventListener('click',event=>{if(event.target===dialog){const b=dialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)dialog.close()}});
   dialog.addEventListener('close',()=>{if(origin)origin.focus({preventScroll:true})});
+
+  const requestDialog=document.getElementById('request-dialog'),requestForm=document.getElementById('request-form');
+  const requestText=document.getElementById('request-text'),requestMode=document.getElementById('request-mode');
+  let requestOrigin=null;
+  document.querySelectorAll('[data-open-request]').forEach(button=>button.addEventListener('click',()=>{
+    requestOrigin=button;
+    const card=button.closest('.participation-card');
+    requestMode.textContent=card.dataset.address+' · '+card.querySelector('h3').textContent.trim();
+    requestDialog.showModal();requestDialog.scrollTop=0;requestText.focus({preventScroll:true});
+  }));
+  requestText.addEventListener('input',()=>requestText.setCustomValidity(''));
+  requestForm.addEventListener('submit',event=>{
+    const text=requestText.value.trim();
+    if(!text){event.preventDefault();requestText.setCustomValidity('Напишите несколько слов о вашей задаче.');requestText.reportValidity();return}
+    // A native GET opens a draft in the named chat. Only the visitor sends it.
+    document.getElementById('request-message').value='Запрос в КБ Гардари\n'+requestMode.textContent+'\n\n'+text;
+  });
+  requestDialog.querySelector('.dialog-close').addEventListener('click',()=>requestDialog.close());
+  requestDialog.addEventListener('click',event=>{if(event.target===requestDialog){const b=requestDialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)requestDialog.close()}});
+  requestDialog.addEventListener('close',()=>{if(requestOrigin)requestOrigin.focus({preventScroll:true})});
 })();
