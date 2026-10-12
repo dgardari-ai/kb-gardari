@@ -1,6 +1,6 @@
 /* Authored words remain independently selectable in the local editor. */
 #principle-title .principle-word{display:block;font-size:inherit;line-height:.94;letter-spacing:-.065em}
-.precedent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;width:100%;margin-top:60px;padding-top:40px;border-top:1px solid var(--kb-section-rule,#666a70)}
+.precedent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;width:100%;margin-top:60px;padding-top:40px}
 .precedent-card{min-width:0;border:1px solid #62666c;border-radius:12px;background:#2b2d30;color:#f1f2f3;overflow:hidden;display:flex}
 .precedent-open{position:relative;display:flex;flex-direction:column;align-items:stretch;width:100%;min-width:0;min-height:330px;margin:0;padding:30px 32px 32px;background:transparent;color:inherit;text-align:left;font-family:Arial,Helvetica,sans-serif;font-weight:400;letter-spacing:normal;text-transform:none;border:0;border-radius:inherit;cursor:pointer;transition:background-color 160ms}
 .precedent-open:hover{background:#33363a}
