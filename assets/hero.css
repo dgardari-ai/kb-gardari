@@ -1,0 +1,86 @@
+/* The site's typography and authored copy remain the base.
+   The reference supplies the scroll relationship, not a new visual theme. */
+.hero-motion-track { position:relative; background:#fff; isolation:isolate; }
+.hero-motion-track .hero {
+  display:block;
+  min-height:0;
+  padding:clamp(38px,6svh,72px) 0 0;
+  background:#fff;
+  overflow:clip;
+}
+.hero-motion-track .hero-intro {
+  position:relative;
+  z-index:2;
+  width:calc(100% - 64px);
+  max-width:1260px;
+  margin:auto;
+  text-align:center;
+}
+.hero-motion-track .hero h1 {
+  font-size:clamp(58px,min(7.2vw,15svh),112px);
+  line-height:.96;
+  margin:24px 0 30px;
+}
+.hero-motion-track .hero-description {
+  max-width:850px;
+  margin:0 auto;
+  font-size:22px;
+  line-height:1.4;
+}
+.hero-motion-track .hero-actions { justify-content:center; margin:28px 0 0; gap:16px; }
+.hero-motion-track .reveal,
+.js .hero-motion-track .reveal.is-visible {
+  opacity:1; transform:none; transition:none; animation:none;
+}
+.collage-travel { position:relative; z-index:1; margin-top:40px; }
+.collage-float { position:relative; margin:0; border:0; border-radius:0; box-shadow:none; background:#fff; }
+.collage-float img { display:block; width:100%; height:auto; border:0; border-radius:0; box-shadow:none; }
+.hero-motion-track.is-parallax .collage-float::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:var(--dissolve-opacity,0);
+  background:linear-gradient(to bottom,
+    #fff 0,
+    #fff var(--dissolve-solid,0px),
+    rgb(255 255 255 / 0) var(--dissolve-end,0px));
+}
+.hero-motion-track.is-parallax .hero {
+  position:sticky;
+  top:0;
+  height:100svh;
+  padding-top:clamp(100px,14svh,140px);
+}
+.hero-motion-track.is-parallax .collage-travel {
+  position:absolute;
+  inset:0 0 auto;
+  margin:0;
+  will-change:transform;
+}
+.hero-motion-track.is-parallax .collage-float,
+.hero-motion-track.is-parallax .hero-intro { will-change:transform; }
+.hero-motion-track.is-parallax .collage-float { will-change:transform,opacity; }
+.hero-motion-track.is-parallax .hero-intro > * { will-change:opacity; }
+.hero-motion-track + section { position:relative; z-index:3; }
+@media (max-width:1024px) {
+  .hero-motion-track .hero h1 { font-size:clamp(56px,7.5vw,82px); }
+  .hero-motion-track .hero-description { font-size:20px; max-width:760px; }
+}
+@media (max-width:767px) {
+  .hero-motion-track .hero { padding-top:36px; padding-bottom:0; }
+  .hero-motion-track .hero-intro { width:calc(100% - 40px); }
+  .hero-motion-track .hero h1 { font-size:clamp(40px,8.6vw,60px); line-height:1.02; margin:22px 0 26px; }
+  .hero-motion-track .hero-description { font-size:18px; line-height:1.5; }
+  .hero-motion-track .hero-actions { margin-top:24px; }
+  .collage-travel { margin-top:24px; }
+}
+@media (min-width:768px) and (max-height:650px) {
+  .hero-motion-track.is-parallax .hero { padding-top:88px; }
+  .hero-motion-track .hero h1 { margin:16px 0 20px; }
+  .hero-motion-track .hero-description { max-width:880px; font-size:20px; line-height:1.35; }
+  .hero-motion-track .hero-actions { margin-top:20px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .hero-motion-track .hero-intro,.collage-travel,.collage-float { will-change:auto; }
+}

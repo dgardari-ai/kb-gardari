@@ -136,3 +136,19 @@
   requestDialog.addEventListener('click',event=>{if(event.target===requestDialog){const b=requestDialog.getBoundingClientRect();if(event.clientX<b.left||event.clientX>b.right||event.clientY<b.top||event.clientY>b.bottom)requestDialog.close()}});
   requestDialog.addEventListener('close',()=>{if(requestOrigin)requestOrigin.focus({preventScroll:true})});
 })();
+
+// Author disclosure follows the actual edited title metrics, including wrapped names.
+(() => {
+  const people = [...document.querySelectorAll('.author-person')];
+  const align = () => people.forEach(person => {
+    const title = person.querySelector('.author-name');
+    if (title) person.style.setProperty('--author-title-center', `${title.offsetTop + title.offsetHeight / 2}px`);
+  });
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(align);
+    people.forEach(person => observer.observe(person.querySelector('.author-name')));
+  }
+  window.addEventListener('resize', align, { passive: true });
+  document.fonts.ready.then(align);
+  align();
+})();
