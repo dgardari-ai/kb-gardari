@@ -248,6 +248,11 @@ html{scroll-padding-top:calc(var(--header-offset) + 12px)}
 }
 @media(max-width:600px){.site-header .header-cta{display:none}}
 
+/* v0.8.1 — retain authored paragraphs and fit the new title on narrow screens. */
+.process-card .case-intro{white-space:pre-line}
+#principle-title{max-width:100%;overflow-wrap:break-word}
+@media(max-width:700px){#principle-title{font-size:clamp(40px,12.8vw,72px)}}
+
 /* v0.8 — responsive text and measured native card headers. */
 .card-section[data-stack-mode="stack"][data-aside-overflow="true"] .case-aside{position:static}
 .hero-content{width:100%;min-width:0}
