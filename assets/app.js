@@ -18,12 +18,40 @@
     const cards=[...section.querySelectorAll('.case-card')];
     const numbers=[...section.querySelectorAll('.case-numbers button')];
     const aside=section.querySelector('.case-aside'),stack=section.querySelector('.case-stack');
+    const asideDescription=section.id==='situations'?aside.querySelector('.aside-description'):null;
     const titles=cards.map(card=>card.querySelector('.case-header'));
     const currentLabel=section.querySelector('.case-current');
     let active=-1,offsets=[];
     function readingTop(card){return section.dataset.stackMode==='stack'?parseFloat(card.style.getPropertyValue('--flow-header-top')):null}
     function configure(){
       section.dataset.stackMode='static';
+      if(asideDescription){
+        // Measure the authored layout afresh before selecting a fitting desktop form.
+        const previousScroll=asideDescription.scrollTop;
+        delete section.dataset.asideFit;
+        section.style.removeProperty('--flow-aside-description-height');
+        asideDescription.removeAttribute('tabindex');
+        asideDescription.removeAttribute('role');
+        asideDescription.removeAttribute('aria-label');
+        const available=innerHeight-headerTop()-12;
+        if(!reduced.matches&&innerWidth>1024&&aside.getBoundingClientRect().height>available){
+          section.dataset.asideFit='compact';
+          const compactHeight=aside.getBoundingClientRect().height;
+          if(compactHeight>available){
+            const descriptionHeight=asideDescription.getBoundingClientRect().height;
+            const readingHeight=Math.floor(available-(compactHeight-descriptionHeight));
+            const minimumReadingHeight=Math.ceil(parseFloat(getComputedStyle(asideDescription).lineHeight)*3);
+            if(readingHeight>=minimumReadingHeight){
+              section.dataset.asideFit='scroll';
+              section.style.setProperty('--flow-aside-description-height',readingHeight+'px');
+              asideDescription.tabIndex=0;
+              asideDescription.setAttribute('role','region');
+              asideDescription.setAttribute('aria-label','Вводный текст: с чем можно прийти. Прокручивается.');
+              asideDescription.scrollTop=previousScroll;
+            }
+          }
+        }
+      }
       section.dataset.asideOverflow=String(aside.getBoundingClientRect().height>innerHeight-headerTop()-12);
       if(reduced.matches||innerWidth<=1024)return;
       // Measure normal flow before pinning headers and bodies as independent layers.
