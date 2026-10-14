@@ -22,13 +22,11 @@
   const centerValue = section.querySelector('.triads-center-value');
   const related = section.querySelector('.triads-related');
   const relatedLinks = [...related.querySelectorAll('[data-triads-peer]')];
-  const pauseButton = section.querySelector('#triads-pause');
-  const resetButton = section.querySelector('#triads-reset');
   const fields = ['label', 'name', 'question', 'text'].map(name => section.querySelector('#triads-detail-' + name));
   const overview = fields.map(el => el.textContent);
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let selected = -1, progress = 2 / 9, frameId = null, lastTime = null;
-  let visible = !('IntersectionObserver' in window), paused = false, activeGroup = -1;
+  let visible = !('IntersectionObserver' in window), activeGroup = -1;
   const period = 27000;
 
   function setGroup(group) {
@@ -50,7 +48,7 @@
     lastTime = null;
   }
   function canMove() {
-    return selected < 0 && !paused && !reduced.matches && visible && !document.hidden && !document.documentElement.classList.contains('kb-editor-editing') && !document.body.classList.contains('kb-editor-editing');
+    return !reduced.matches && visible && !document.hidden && !document.documentElement.classList.contains('kb-editor-editing') && !document.body.classList.contains('kb-editor-editing');
   }
   function frame(now) {
     if (!canMove()) { stop(); return; }
@@ -62,11 +60,8 @@
   function syncMotion() {
     stop();
     orbiter.hidden = false;
-    orbiter.style.opacity = reduced.matches && selected < 0 ? '0' : '1';
-    pauseButton.hidden = reduced.matches || selected >= 0;
-    pauseButton.textContent = paused ? 'продолжить' : 'пауза';
-    pauseButton.setAttribute('aria-label', paused ? 'Продолжить движение точки' : 'Приостановить движение точки');
-    section.dataset.triadsState = selected >= 0 ? 'selected' : reduced.matches ? 'reduced' : paused ? 'paused' : canMove() ? 'moving' : 'offscreen';
+    orbiter.style.opacity = reduced.matches ? '0' : '1';
+    section.dataset.triadsState = reduced.matches ? 'reduced' : canMove() ? 'moving' : 'offscreen';
     if (canMove()) frameId = requestAnimationFrame(frame);
   }
   function renderChoice() {
@@ -87,13 +82,9 @@
       });
       related.hidden = false;
     }
-    drawDot();
-    syncMotion();
   }
   function select(index) {
     selected = index;
-    progress = index / 9;
-    paused = false;
     renderChoice();
   }
   buttons.forEach(button => {
@@ -103,14 +94,11 @@
     button.disabled = false;
     button.addEventListener('click', () => select(Number(button.dataset.triadsSelect)));
   });
-  // Reuse these controls so keyboard focus survives a cross-triad transition.
+  // Reuse these links so keyboard focus survives a choice within the same triad.
   relatedLinks.forEach(link => link.addEventListener('click', event => {
     event.preventDefault();
     select(Number(link.dataset.triadsPeer));
   }));
-  resetButton.disabled = false;
-  resetButton.addEventListener('click', () => { selected = -1; paused = false; renderChoice(); });
-  pauseButton.addEventListener('click', () => { paused = !paused; syncMotion(); });
   reduced.addEventListener('change', syncMotion);
   document.addEventListener('visibilitychange', syncMotion);
   document.addEventListener('kb:editor-mode', syncMotion);
@@ -123,4 +111,78 @@
   section.classList.add('triads-ready');
   drawDot();
   syncMotion();
+})();
+
+// Align visible text and the circle independently of the taller right-hand column.
+(() => {
+  const section = document.getElementById('tools');
+  if (!section) return;
+  const heading = section.querySelector('.triads-heading');
+  const title = section.querySelector('#triads-title');
+  const intro = section.querySelector('.triads-heading > .kb-body');
+  const order = section.querySelector('#triads-order');
+  const wheel = section.querySelector('.triads-wheel');
+  const ring = section.querySelector('.triads-ring');
+  const detail = section.querySelector('.triads-detail');
+  const divider = section.querySelector('.triads-download-row');
+  if (!heading || !title || !intro || !order || !wheel || !ring || !detail || !divider) return;
+  const context = document.createElement('canvas').getContext('2d');
+  let scheduled = false;
+
+  function firstLineInk(element) {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode()) && !node.textContent.trim()) {}
+    if (!node || !context) return element.getBoundingClientRect();
+    const text = node.textContent;
+    const start = text.search(/\S/);
+    const range = document.createRange();
+    range.setStart(node, start);
+    range.setEnd(node, start + 1);
+    const first = range.getBoundingClientRect();
+    let end = start + 1;
+    for (; end < text.length; end++) {
+      range.setStart(node, end);
+      range.setEnd(node, end + 1);
+      if (range.getBoundingClientRect().top > first.top + 1) break;
+    }
+    const style = getComputedStyle(node.parentElement);
+    context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    context.textBaseline = 'alphabetic';
+    const metrics = context.measureText(text.slice(start, end).trimEnd());
+    if (!Number.isFinite(metrics.fontBoundingBoxAscent)) return first;
+    const baseline = first.top + metrics.fontBoundingBoxAscent;
+    return { top: baseline - metrics.actualBoundingBoxAscent,
+      bottom: baseline + metrics.actualBoundingBoxDescent };
+  }
+  function setOffset(element, name, value) {
+    const previous = parseFloat(element.style.getPropertyValue(name)) || 0;
+    if (Math.abs(previous - value) > .01) element.style.setProperty(name, `${value.toFixed(3)}px`);
+  }
+  function align() {
+    scheduled = false;
+    const introOffset = parseFloat(intro.style.getPropertyValue('--triads-intro-shift')) || 0;
+    setOffset(intro, '--triads-intro-shift', innerWidth > 700
+      ? firstLineInk(title).top - firstLineInk(intro).top + introOffset : 0);
+
+    const wheelOffset = parseFloat(wheel.style.getPropertyValue('--triads-wheel-shift')) || 0;
+    const bounds = ring.getBoundingClientRect();
+    const center = bounds.top + bounds.height / 2 - wheelOffset;
+    const target = (firstLineInk(order).bottom + divider.getBoundingClientRect().top) / 2;
+    setOffset(wheel, '--triads-wheel-shift', innerWidth > 1100 ? target - center : 0);
+  }
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(align);
+  }
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(schedule);
+    [heading, title, intro, order, wheel, detail, divider].forEach(element => observer.observe(element));
+  }
+  window.addEventListener('resize', schedule, { passive: true });
+  document.addEventListener('kb:editor-mode', schedule);
+  document.fonts.ready.then(schedule);
+  document.fonts.addEventListener('loadingdone', schedule);
+  schedule();
 })();

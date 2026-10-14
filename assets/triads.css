@@ -6,11 +6,11 @@
 .triads-heading h2{font-size:clamp(60px,7.5vw,116px);line-height:var(--display-leading);letter-spacing:-.055em}
 .triads-title-group{min-width:0}
 .triads-order{margin-top:26px;color:var(--kb-section-body);font-size:clamp(12px,1.3vw,18px);line-height:1.35;letter-spacing:0;white-space:nowrap}
-/* Optical top alignment: compact display leading places the heading's ink below its box. */
-.triads-heading>.kb-body{font-size:clamp(18px,1.7vw,24px);line-height:1.45;max-width:520px;padding-top:clamp(6px,calc(2vw - 9px),22px)}
+/* The optical offset follows the actual first-line glyphs, including editor fonts. */
+.triads-heading>.kb-body{font-size:clamp(18px,1.7vw,24px);line-height:1.45;max-width:520px;padding-top:clamp(6px,calc(2vw - 9px),22px);transform:translateY(var(--triads-intro-shift,0px))}
 .triads-stage{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:center;gap:clamp(28px,4vw,64px);margin-top:42px}
 .triads-wheel-column{min-width:0}
-.triads-wheel{position:relative;width:100%;max-width:760px;aspect-ratio:1;margin-inline:auto;isolation:isolate}
+.triads-wheel{position:relative;width:90%;max-width:684px;aspect-ratio:1;margin-inline:auto;isolation:isolate;transform:translateY(var(--triads-wheel-shift,0px))}
 .triads-wheel>svg{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;overflow:visible}
 .triads-ring{fill:none;stroke:var(--kb-section-rule);stroke-width:1}
 .triads-tick{stroke:var(--kb-section-ink);stroke-width:.8;opacity:.2}
@@ -28,7 +28,7 @@
 .triads-node{position:absolute;left:var(--node-x);top:var(--node-y);transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:112px;min-height:48px;padding:6px 4px;border:0;border-radius:0;background:transparent;color:var(--kb-section-ink);font:15px/1.2 Arial,Helvetica,sans-serif;cursor:pointer;touch-action:manipulation}
 .triads-node-number{font:10px/1.4 var(--label-font);color:var(--kb-section-body)}
 .triads-node>span:last-child{display:block;transition:transform .18s ease,color .18s ease}
-.triads-node:hover>span:last-child,.triads-node:focus-visible>span:last-child{transform:scale(1.2);color:var(--blue)}
+.triads-node:hover>span:last-child,.triads-node:focus-visible>span:last-child{transform:scale(1.2);color:var(--triads-hover,#21669B)}
 .triads-node[aria-pressed=true]>span:last-child{font-weight:700}
 .triads-node[aria-pressed=true] .triads-node-number{color:var(--ink)}
 .triads-section button:focus-visible,.triads-related a:focus-visible,.triads-download:focus-visible{outline:2px solid var(--kb-section-ink);outline-offset:4px}
@@ -43,13 +43,8 @@
 .triads-related-item a{color:var(--kb-section-ink);text-decoration:none;text-underline-offset:4px}
 .triads-related-item a:hover{text-decoration:underline;text-decoration-thickness:1px}
 .triads-related-item p{font-size:15px;line-height:1.45;color:var(--kb-section-body)}
-.triads-detail-bottom{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px;margin-top:auto;padding-top:24px;border-top:1px solid var(--kb-section-rule)}
 .triads-detail-copy{margin-bottom:24px}
-.triads-related:not([hidden]){margin-top:0;margin-bottom:24px}
-.triads-motion-controls{display:flex;align-items:center;gap:20px}
-.triads-motion-controls .text-link{min-height:44px;font-size:11px;gap:8px;margin:0;white-space:nowrap}
-.triads-motion-controls [hidden]{display:none}
-.triads-motion-controls .chevron{width:14px;height:14px}
+.triads-related:not([hidden]){margin-top:0;margin-bottom:0}
 .triads-download-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center;margin-top:38px;padding-top:30px;border-top:1px solid var(--kb-section-ink)}
 .triads-download-row h3{font-size:26px;line-height:1.15;letter-spacing:-.035em;margin-bottom:14px}
 .triads-download-row .kb-body{max-width:800px;font-size:17px;line-height:1.5}
@@ -60,13 +55,41 @@
 .triads-no-script{margin-top:24px}
 .triads-no-script details{padding:16px 0;border-top:1px solid var(--kb-section-rule)}
 .triads-no-script p{padding-top:12px}
-.triads-section:not(.triads-ready) .triads-motion-controls{display:none}
+/* Keep the title, wheel and reading together in a laptop viewport.
+   The circle is optically centered from the left caption to the lower divider. */
+@media(min-width:1101px){
+ .triads-section{padding-top:16px;padding-bottom:56px}
+ .triads-section .section-label{margin-bottom:6px}
+ .triads-order{margin-top:8px}
+ .triads-heading>.kb-body{line-height:1.35;padding-top:6px}
+ .triads-stage{margin-top:24px}
+ .triads-wheel{width:72%;max-width:min(547.2px,max(387px,calc(90svh - 261px)));margin-block:-10px}
+ .triads-detail{min-height:0;padding-top:14px}
+ .triads-detail h3{margin:12px 0 14px}
+ .triads-question{margin-bottom:12px;line-height:1.2}
+ .triads-detail-copy{margin-bottom:14px}
+ .triads-related-list{gap:12px}
+ .triads-related-item h4{margin-bottom:5px}
+ .triads-download-row{margin-top:24px;padding-top:24px}
+}
+@media(min-width:1101px) and (max-height:820px){
+ .triads-section{padding-top:12px}
+ .triads-section .section-label{margin-bottom:4px}
+ .triads-order{margin-top:4px}
+ .triads-detail{padding-top:10px}
+ .triads-detail h3{font-size:clamp(38px,3.3vw,52px);margin:6px 0 8px}
+ .triads-question{font-size:clamp(20px,1.7vw,25px);margin-bottom:8px}
+ .triads-detail-copy{margin-bottom:8px}
+ .triads-related-list{gap:8px}
+ .triads-related-item h4{font-size:22px;margin-bottom:4px}
+ .triads-related-item p{font-size:14px;line-height:1.35}
+}
 @media(max-width:1100px){
  .triads-section{padding-top:64px;padding-bottom:64px}
  .triads-heading{grid-template-columns:1fr 1fr;align-items:start;gap:28px}
  .triads-heading h2{font-size:clamp(54px,7vw,76px)}
  .triads-stage{grid-template-columns:1fr;gap:28px;margin-top:28px}
- .triads-wheel{max-width:700px}
+ .triads-wheel{max-width:630px}
  .triads-detail{min-height:0;padding-bottom:12px}
  .triads-detail h3{font-size:52px}
  .triads-detail-copy{max-width:720px}
@@ -85,7 +108,7 @@
  .triads-order{margin-top:20px;font-size:clamp(10px,2.75vw,12px)}
  .triads-heading>.kb-body{font-size:18px;padding-top:0}
  .triads-stage{margin-top:28px;gap:30px}
- .triads-wheel{width:100%;max-width:470px;overflow:clip}
+ .triads-wheel{width:90%;max-width:423px;overflow:clip}
  .triads-wheel>svg{width:130%;height:130%;inset:-15%}
  .triads-node{display:none}
  .triads-center{width:50%;padding:6px 0}
