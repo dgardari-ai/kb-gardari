@@ -21,7 +21,7 @@
 .triads-node-dot.is-active{fill:var(--accent);opacity:1}
 .triads-orbiter{fill:var(--accent);stroke:var(--kb-section-ink);stroke-width:1.5}
 .triads-center{position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:40%;padding:10px 0;text-align:center;background:transparent;pointer-events:none}
-.triads-center-name{display:block;font-size:clamp(19px,2vw,29px);font-weight:700;line-height:.7333333333;letter-spacing:-.04em}
+.triads-center-name{display:block;font-size:clamp(15.2px,1.6vw,23.2px);font-weight:700;line-height:.7333333333;letter-spacing:-.04em}
 .triads-center-prefix,.triads-center-value{display:block}
 .triads-center-prefix{font-size:.8em}
 .triads-small{font-family:var(--label-font);font-size:11px;line-height:1.5;letter-spacing:.025em;color:var(--kb-section-body);text-transform:uppercase}
@@ -112,7 +112,7 @@
  .triads-wheel>svg{width:130%;height:130%;inset:-15%}
  .triads-node{display:none}
  .triads-center{width:50%;padding:6px 0}
- .triads-center-name{font-size:clamp(18px,5vw,24px)}
+ .triads-center-name{font-size:clamp(14.4px,4vw,19.2px)}
  .triads-mobile-groups{display:grid;gap:18px;margin-top:18px}
  .triads-mobile-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
  .triads-mobile-list button{min-height:48px;padding:10px 3px;background:transparent;border:1px solid var(--kb-section-rule);border-radius:8px;color:var(--kb-section-ink);font:13px/1.2 Arial,Helvetica,sans-serif;cursor:pointer;touch-action:manipulation}
