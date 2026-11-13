@@ -1,0 +1,140 @@
+/* Native Affinity baseline positions, measured at 964 CSS px. */
+/* Relative inline positioning preserves glyph widths, kerning and line boxes. */
+@media(min-width:761px){
+/* hero-formula */
+#top .top-formula .type-line{position:relative;left:calc(0.002793 * var(--u));top:calc(1.753332 * var(--u))}
+/* hero-brand-copy */
+.brand-hero .brand-copy .type-line{position:relative;left:calc(0.114848 * var(--u));top:calc(2.894204 * var(--u))}
+/* hero-section-label */
+#top .hero-scene > .section-label .type-line{position:relative;left:calc(0.098755 * var(--u));top:calc(0.057441 * var(--u))}
+/* hero-heading */
+#hero-heading .type-line{position:relative;left:calc(-0.001869 * var(--u));top:calc(0.816479 * var(--u))}
+/* hero-intro */
+.hero-intro .type-line{position:relative;left:calc(0.006981 * var(--u));top:calc(1.145756 * var(--u))}
+/* hero-contact */
+.hero-contact .type-line{position:relative;left:calc(2.776881 * var(--u));top:calc(0.119625 * var(--u))}
+/* hero-disciplines */
+.hero-disciplines .type-line{position:relative;left:calc(0.002251 * var(--u));top:calc(2.135545 * var(--u))}
+/* situations-section-label */
+#situations > .section-label .type-line{position:relative;left:calc(0.098755 * var(--u));top:calc(0.012019 * var(--u))}
+/* situations-heading */
+#situations-heading .type-line{position:relative;left:calc(0.000819 * var(--u));top:calc(-0.707261 * var(--u))}
+/* situations-intro */
+.situations-intro .type-line{position:relative;left:calc(-0.000951 * var(--u));top:calc(0.982793 * var(--u))}
+/* situation-case-titles */
+.situation-list .case-title .type-line{position:relative;left:calc(0.338061 * var(--u));top:calc(0.686096 * var(--u))}
+/* bureau-section-label */
+#bureau > .section-label .type-line{position:relative;left:calc(0.024018 * var(--u));top:calc(0.010785 * var(--u))}
+/* bureau-heading */
+#bureau-heading .type-line{position:relative;left:calc(0.003810 * var(--u));top:calc(-0.240191 * var(--u))}
+/* bureau-quote */
+#bureau > blockquote .type-line{position:relative;left:calc(0.008573 * var(--u));top:calc(0.749257 * var(--u))}
+/* precedent-1-heading */
+.precedent-card:nth-child(1) h3 .type-line{position:relative;left:calc(0.038485 * var(--u));top:calc(1.873901 * var(--u))}
+/* precedent-1-action */
+.precedent-card:nth-child(1) .outline-pill .type-line{position:relative;left:calc(0.763248 * var(--u));top:calc(-0.875033 * var(--u))}
+/* precedent-2-heading */
+.precedent-card:nth-child(2) h3 .type-line{position:relative;left:calc(0.625449 * var(--u));top:calc(1.873901 * var(--u))}
+/* precedent-2-action */
+.precedent-card:nth-child(2) .outline-pill .type-line{position:relative;left:calc(0.850336 * var(--u));top:calc(-0.873758 * var(--u))}
+/* precedent-3-heading */
+.precedent-card:nth-child(3) h3 .type-line{position:relative;left:calc(0.266845 * var(--u));top:calc(1.873901 * var(--u))}
+/* precedent-3-action */
+.precedent-card:nth-child(3) .outline-pill .type-line{position:relative;left:calc(0.768406 * var(--u));top:calc(-0.873758 * var(--u))}
+/* practice-section-label */
+#practice > .section-label .type-line{position:relative;left:calc(0.411750 * var(--u));top:calc(0.007865 * var(--u))}
+/* practice-heading */
+#practice-heading .type-line{position:relative;left:calc(0.000646 * var(--u));top:calc(-0.158217 * var(--u))}
+/* practice-intro */
+.practice-intro .type-line{position:relative;left:calc(-0.000951 * var(--u));top:calc(0.801713 * var(--u))}
+/* process-1-heading */
+#process-1 .process-title .type-line{position:relative;left:calc(0.045256 * var(--u));top:calc(-0.075345 * var(--u))}
+/* process-1-number */
+#process-1 .step-number .type-line{position:relative;left:calc(0.096554 * var(--u));top:calc(1.199202 * var(--u))}
+/* process-1-terms */
+#process-1 .process-terms .term-label .type-line{position:relative;left:calc(-0.221089 * var(--u));top:calc(0.008523 * var(--u))}
+/* process-2-heading */
+#process-2 .process-title .type-line{position:relative;left:calc(0.089541 * var(--u));top:calc(1.248725 * var(--u))}
+/* process-2-number */
+#process-2 .step-number .type-line{position:relative;left:calc(0.096554 * var(--u));top:calc(1.195114 * var(--u))}
+/* process-2-terms */
+#process-2 .process-terms .term-label .type-line{position:relative;left:calc(-0.006970 * var(--u));top:calc(0.004178 * var(--u))}
+/* process-3-heading */
+#process-3 .process-title .type-line{position:relative;left:calc(0.045256 * var(--u));top:calc(-0.080119 * var(--u))}
+/* process-3-number */
+#process-3 .step-number .type-line{position:relative;left:calc(0.096554 * var(--u));top:calc(1.194843 * var(--u))}
+/* process-3-terms */
+#process-3 .process-terms .term-label .type-line{position:relative;left:calc(-0.000725 * var(--u));top:calc(-0.010726 * var(--u))}
+/* process-4-heading */
+#process-4 .process-title .type-line{position:relative;left:calc(0.000970 * var(--u));top:calc(1.241851 * var(--u))}
+/* process-4-number */
+#process-4 .step-number .type-line{position:relative;left:calc(0.096554 * var(--u));top:calc(1.188245 * var(--u))}
+/* process-4-terms */
+#process-4 .process-terms .term-label .type-line{position:relative;left:calc(0.002962 * var(--u));top:calc(0.017693 * var(--u))}
+/* process-5-heading */
+#process-5 .process-title .type-line{position:relative;left:calc(0.045256 * var(--u));top:calc(-0.069216 * var(--u))}
+/* process-5-number */
+#process-5 .step-number .type-line{position:relative;left:calc(0.096554 * var(--u));top:calc(1.205756 * var(--u))}
+/* process-5-terms */
+#process-5 .process-terms .term-label .type-line{position:relative;left:calc(-0.009201 * var(--u));top:calc(0.006087 * var(--u))}
+/* process-first-intro */
+#process-1 .process-first-intro .type-line{position:relative;left:calc(0.006378 * var(--u));top:calc(0.603806 * var(--u))}
+/* process-contact */
+.process-contact .type-line{position:relative;left:calc(3.911260 * var(--u));top:calc(0.719591 * var(--u))}
+/* projects-section-label */
+#projects > .section-label .type-line{position:relative;left:calc(0.036108 * var(--u));top:calc(0.011440 * var(--u))}
+/* projects-heading */
+#projects-heading .type-line{position:relative;left:calc(-2.203971 * var(--u));top:calc(-0.196653 * var(--u))}
+/* projects-intro */
+.projects-intro .type-line{position:relative;left:calc(0.117926 * var(--u));top:calc(1.140650 * var(--u))}
+/* project-1-heading */
+#project-1 h3 .type-line{position:relative;left:calc(0.074554 * var(--u));top:calc(-0.899708 * var(--u))}
+/* project-2-heading */
+#project-2 h3 .type-line{position:relative;left:calc(0.106445 * var(--u));top:calc(-1.231851 * var(--u))}
+/* project-3-heading */
+#project-3 h3 .type-line{position:relative;left:calc(0.435305 * var(--u));top:calc(-1.725984 * var(--u))}
+/* project-4-heading */
+#project-4 h3 .type-line{position:relative;left:calc(-0.159587 * var(--u));top:calc(-1.375902 * var(--u))}
+/* project-5-heading */
+#project-5 h3 .type-line{position:relative;left:calc(0.106445 * var(--u));top:calc(-1.330503 * var(--u))}
+/* project-6-heading */
+#project-6 h3 .type-line{position:relative;left:calc(0.005863 * var(--u));top:calc(-1.403594 * var(--u))}
+/* authors-section-label */
+#author > .section-label .type-line{position:relative;left:calc(0.024421 * var(--u));top:calc(0.015937 * var(--u))}
+/* author-denis-name */
+#person-denis .author-bio summary h3 .type-line{position:relative;left:calc(-0.285111 * var(--u));top:calc(-0.229713 * var(--u))}
+/* author-denis-plus */
+#person-denis .author-bio summary > span .type-line{position:relative;left:calc(0.622111 * var(--u));top:calc(1.500225 * var(--u))}
+/* author-denis-intro */
+#person-denis > .author-copy > .author-short-intro .type-line,#person-denis .author-bio > .author-intro .type-line{position:relative;left:calc(0.008573 * var(--u));top:calc(1.734238 * var(--u))}
+/* author-denis-vocabulary */
+#person-denis .author-terms .type-line{position:relative;left:calc(-0.001049 * var(--u));top:calc(3.033369 * var(--u))}
+/* author-ivan-name */
+#person-ivan .author-bio summary h3 .type-line{position:relative;left:calc(-2.209123 * var(--u));top:calc(-0.483904 * var(--u))}
+/* author-ivan-plus */
+#person-ivan .author-bio summary > span .type-line{position:relative;left:calc(-38.456399 * var(--u));top:calc(0.440709 * var(--u))}
+/* author-ivan-intro */
+#person-ivan > .author-copy > .author-short-intro .type-line,#person-ivan .author-bio > .author-intro .type-line{position:relative;left:calc(0.009370 * var(--u));top:calc(1.692501 * var(--u))}
+/* author-ivan-vocabulary */
+#person-ivan .author-terms .type-line{position:relative;left:calc(-0.751743 * var(--u));top:calc(1.491632 * var(--u))}
+/* faq-section-label */
+#questions .faq-window > .section-label .type-line{position:relative;left:calc(0.068000 * var(--u));top:calc(0.074098 * var(--u))}
+/* faq-heading */
+#faq-heading .type-line{position:relative;left:calc(0.002944 * var(--u));top:calc(0.284953 * var(--u))}
+/* faq-questions */
+#questions .faq-question .type-line{position:relative;left:calc(2.058971 * var(--u));top:calc(-0.639692 * var(--u))}
+/* faq-pluses */
+#questions .faq-plus .type-line{position:relative;left:calc(8.875489 * var(--u));top:calc(-0.145953 * var(--u))}
+/* faq-contact */
+.faq-contact .type-line{position:relative;left:calc(2.470978 * var(--u));top:calc(0.729525 * var(--u))}
+/* footer-brand-copy */
+.brand-footer .brand-copy .type-line{position:relative;left:calc(0.125153 * var(--u));top:calc(3.080616 * var(--u))}
+/* footer-vocabulary */
+.footer-terms .type-line{position:relative;left:calc(0.130318 * var(--u));top:calc(2.169635 * var(--u))}
+/* footer-contact-labels */
+.contact-grid .contact-card .type-line{position:relative;left:calc(0.465884 * var(--u));top:calc(0.444858 * var(--u))}
+/* agent-source-intro */
+#agent-dialog .agent-description > p:not(.agent-status) .type-line{position:relative;left:calc(0.010099 * var(--u));top:calc(0.847384 * var(--u))}
+/* agent-close-label */
+#agent-dialog .agent-close .type-line{position:absolute;left:calc(15.897001 * var(--u));top:calc(1.249562 * var(--u))}
+}

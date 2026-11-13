@@ -1,0 +1,46 @@
+/* Remove text decoration only. Keep focus outlines and authored dotted rules. */
+#situations .situation-item > .case-summary,
+#situations .situation-item > .case-summary .case-title,
+#situations .situation-item > .case-summary .type-line,
+#practice .step-details > summary,
+#practice .process-heading,
+#practice .process-heading .process-title,
+#practice .process-heading .type-line,
+#practice .process-terms :is(button, summary),
+#practice .process-terms .term-label,
+#practice .process-terms .term-plus,
+#practice .process-terms .type-line {
+  text-decoration: none;
+}
+
+/* The existing upper and lower actions share identical column geometry. */
+#contact-dialog :is(.contact-actions, .telegram-actions) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+}
+
+#contact-dialog :is(.contact-actions, .telegram-actions) > .pill {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  height: 100%;
+  margin: 0 !important;
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
+  overflow-wrap: anywhere;
+}
+
+/* app.js continues toggling each existing child's hidden attribute. */
+#contact-dialog .telegram-actions:not(:has(> :not([hidden]))) {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  #contact-dialog :is(.contact-actions, .telegram-actions) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

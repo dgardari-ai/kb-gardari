@@ -1,0 +1,6 @@
+.kb-ring-overlay {
+  position: absolute;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}

@@ -1,0 +1,17 @@
+/* Stage bodies move inside their existing padding; no pinned scene or type changes. */
+#practice .step-details[data-step-scroll-managed] > .slider-reveal > .step-content {
+  transform: translate3d(0, var(--step-scroll-offset, 0px), 0);
+  transform-origin: top left;
+}
+
+html.kb-editor-editing #practice .step-content,
+html.vmg-editor-editing #practice .step-content,
+body.kb-editor-editing #practice .step-content {
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #practice .step-details[data-step-scroll-managed] > .slider-reveal > .step-content {
+    transform: none !important;
+  }
+}

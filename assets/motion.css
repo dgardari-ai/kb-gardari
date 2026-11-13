@@ -1,0 +1,89 @@
+/* Motion only: the authored type, spacing, dimensions and markup remain the source. */
+.page-shell[data-kb-centered] { margin-top: var(--kb-intro-offset, 12px); }
+
+html.js.intro-mode:not(.kb-motion-static) .hero-scene > :is(.top-band,.top-formula,.brand-hero,.hero-figure,.section-label,h1,.hero-intro,.hero-contact,.hero-logo) {
+  visibility: hidden;
+}
+html.js.intro-mode:not(.kb-motion-static) .hero-scene > [data-kb-entrance="shown"] {
+  visibility: visible;
+}
+html.js.intro-mode:not(.kb-motion-static) .hero-window .frame-skin { visibility: hidden; }
+html.js.intro-mode:not(.kb-motion-static) .hero-window .frame-skin[data-kb-border] { visibility: visible; }
+
+html.js.intro-mode:not(.kb-motion-static) .hero-disciplines {
+  visibility: hidden;
+  opacity: var(--kb-science-progress, 0);
+  transform: translateY(var(--kb-science-shift, 16px));
+}
+html.js.intro-mode:not(.kb-motion-static) .hero-disciplines[data-kb-science-visible="true"] {
+  visibility: visible;
+}
+html.js.intro-mode:not(.kb-motion-static) .page-shell > :is(section, footer):not(#top) {
+  visibility: hidden;
+}
+html.js.intro-mode:not(.kb-motion-static) .page-shell > :is(section, footer):not(#top)[data-kb-reveal="shown"] {
+  visibility: visible;
+}
+
+.brand-orb { transform-origin: center center; }
+.kb-capsule-entering {
+  isolation: isolate;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.kb-brand-shell {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: -1;
+}
+.kb-fold-segment {
+  display: inline-block;
+  vertical-align: baseline;
+  perspective: 700px;
+  white-space: pre;
+}
+.kb-fold-piece {
+  position: relative;
+  display: inline-block;
+  line-height: inherit;
+  white-space: pre;
+  transform-origin: 50% 0%;
+  backface-visibility: hidden;
+}
+.kb-fold-piece::after {
+  content: attr(data-fold-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(180deg, rgba(0,0,0,.58), rgba(0,0,0,.22) 42%, rgba(255,255,255,.26));
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: var(--kb-heading-crease, 0);
+}
+
+html.kb-motion-static .hero-disciplines,
+html.kb-motion-static .page-shell > [data-kb-reveal],
+html.kb-motion-static .hero-scene > *,
+html.kb-motion-static .hero-window .frame-skin {
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js.intro-mode .hero-disciplines,
+  html.js.intro-mode .page-shell > :is(section, footer):not(#top),
+  html.js.intro-mode .hero-scene > *,
+  html.js.intro-mode .hero-window .frame-skin {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .kb-fold-piece { transform: none !important; opacity: 1 !important; }
+  .kb-fold-piece::after { opacity: 0 !important; }
+}

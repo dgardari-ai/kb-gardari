@@ -1,0 +1,53 @@
+/* Display faces use capitals; serif copy and its weights remain authored. */
+.hero h1,
+.chapter > h1,
+.chapter > h2,
+.faq-window > h2,
+.author-bio summary h3,
+.detail-dialog h2,
+.contact-dialog h2 {
+  text-transform: uppercase;
+}
+
+/* The five original stage descriptions replace the temporary first-stage copy. */
+.step-details .step-content {
+  font-family: var(--serif);
+  font-size: calc(14.761899 * var(--u));
+  line-height: calc(16.607195 * var(--u));
+  font-weight: 400;
+}
+
+/* Parameter labels keep their source baseline and only the sign reacts. */
+.process-terms .parameter-item > .term-summary,
+.process-terms .parameter-item > .term-summary:hover,
+.process-terms .parameter-item > .term-summary .term-label,
+.process-terms .parameter-item > .term-summary:hover .term-label,
+.process-terms .parameter-item > .term-summary .term-label > .type-line {
+  text-decoration: none;
+}
+.process-terms .parameter-item > .term-summary { align-items: center; }
+.process-terms .parameter-item > .term-summary > .term-plus {
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  height: calc(31.468314 * var(--u));
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  font-weight: 400;
+  text-decoration: none;
+}
+.process-terms .parameter-item > .term-summary > .term-plus > .type-line,
+.process-terms .parameter-item[open] > .term-summary > .term-plus::after {
+  display: block;
+  line-height: 1;
+  transform: translateY(.08em);
+}
+.process-terms .parameter-item[open] > .term-summary > .term-plus > .type-line { display: none; }
+.process-terms .parameter-item > .term-summary:hover > .term-plus { font-weight: 600; }
+
+@media (max-width: 760px) {
+  .step-details .step-content { font-size: 14px; line-height: 1.3; }
+  .process-terms .parameter-item > .term-summary > .term-plus { height: 1.4em; }
+}

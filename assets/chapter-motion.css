@@ -1,0 +1,14 @@
+/* Only visibility and paint effects. No authored position or type is changed. */
+[data-kb-chapter-node="waiting"],
+[data-kb-chapter-frame="waiting"] { visibility: hidden; }
+[data-kb-chapter-node="shown"],
+[data-kb-chapter-frame="tracing"],
+[data-kb-chapter-frame="shown"] { visibility: visible; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-kb-chapter-node], [data-kb-chapter-frame] {
+    visibility: visible !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+}

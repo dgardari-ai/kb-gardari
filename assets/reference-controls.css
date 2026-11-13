@@ -1,0 +1,35 @@
+/* Exact native control boxes and original vector glyphs. */
+.ref-icon{display:block;position:absolute;max-width:none;pointer-events:none}
+.pill-arrow{position:static!important;transform:none!important}
+.pill:hover .ref-icon{filter:brightness(0)}
+@media(min-width:761px){
+.hero-contact .ref-icon{left:calc(179.126838 * var(--u) - 1px);top:calc(12.592048 * var(--u) - 1px);width:calc(7.310715 * var(--u));height:calc(9.303572 * var(--u))}
+.process-contact .ref-icon{left:calc(293.677443 * var(--u) - 1px);top:calc(19.563948 * var(--u) - 1px);width:calc(5.317858 * var(--u));height:calc(9.635715 * var(--u))}
+.precedent-card:nth-child(1) .outline-pill{left:calc(26.563723 * var(--u));top:calc(194.762654 * var(--u));width:calc(205.054400 * var(--u));height:calc(34.694201 * var(--u));right:auto;bottom:auto}
+.precedent-card:nth-child(1) .outline-pill .ref-icon{left:calc(146.661020 * var(--u) - 1px);top:calc(12.400222 * var(--u) - 1px);width:calc(7.310715 * var(--u));height:calc(9.967858 * var(--u))}
+.precedent-card:nth-child(2) .outline-pill{left:calc(26.833962 * var(--u));top:calc(190.420180 * var(--u));width:calc(205.054400 * var(--u));height:calc(34.694201 * var(--u));right:auto;bottom:auto}
+.precedent-card:nth-child(2) .outline-pill .ref-icon{left:calc(146.411107 * var(--u) - 1px);top:calc(12.424837 * var(--u) - 1px);width:calc(7.642858 * var(--u));height:calc(9.635715 * var(--u))}
+.precedent-card:nth-child(3) .outline-pill{left:calc(26.501908 * var(--u));top:calc(190.420180 * var(--u));width:calc(205.054400 * var(--u));height:calc(34.694201 * var(--u));right:auto;bottom:auto}
+.precedent-card:nth-child(3) .outline-pill .ref-icon{left:calc(146.591817 * var(--u) - 1px);top:calc(12.424837 * var(--u) - 1px);width:calc(7.642858 * var(--u));height:calc(9.635715 * var(--u))}
+.faq-contact{left:calc(94.250477 * var(--u));bottom:calc(-24.000028 * var(--u));width:calc(260.300620 * var(--u));height:calc(48.160840 * var(--u))}
+.faq-contact .ref-icon{left:calc(202.815127 * var(--u) - 1px);top:calc(19.541734 * var(--u) - 1px);width:calc(5.650001 * var(--u));height:calc(9.635715 * var(--u))}
+.agent-close .ref-icon{left:calc(148.190010 * var(--u) - 0px);top:calc(4.611510 * var(--u) - 0px);width:calc(9.967858 * var(--u));height:calc(10.300001 * var(--u))}
+.agent-input>button:first-child .ref-icon{left:calc(24.034933 * var(--u) - 1px);top:calc(16.337791 * var(--u) - 1px);width:calc(17.275002 * var(--u));height:calc(16.278573 * var(--u))}
+.agent-input>button:last-child .ref-icon{left:calc(11.049713 * var(--u));top:calc(13.760761 * var(--u));width:calc(13.953573 * var(--u));height:calc(7.975001 * var(--u))}
+.agent-input>button:first-child{position:absolute;left:0;top:0;width:calc(60 * var(--u));height:100%;padding:0}
+.agent-input>button:last-child{left:calc(682.586 * var(--u) - 1px);top:calc(6.563 * var(--u) - 1px)}
+.agent-close>.agent-x{position:static;transform:none;font-size:0}
+}
+@media(max-width:760px){
+.hero-contact .ref-icon{left:auto;right:28px;top:50%;width:7.310715px;height:9.303572px;transform:translateY(-50%)}
+.process-contact .ref-icon{left:auto;right:28px;top:50%;width:5.317858px;height:9.635715px;transform:translateY(-50%)}
+.precedent-card:nth-child(1) .outline-pill .ref-icon{left:auto;right:28px;top:50%;width:7.310715px;height:9.967858px;transform:translateY(-50%)}
+.precedent-card:nth-child(2) .outline-pill .ref-icon{left:auto;right:28px;top:50%;width:7.642858px;height:9.635715px;transform:translateY(-50%)}
+.precedent-card:nth-child(3) .outline-pill .ref-icon{left:auto;right:28px;top:50%;width:7.642858px;height:9.635715px;transform:translateY(-50%)}
+.faq-contact .ref-icon{left:auto;right:28px;top:50%;width:5.650001px;height:9.635715px;transform:translateY(-50%)}
+.agent-close .ref-icon{position:relative;inset:auto;width:9.967858px;height:10.300001px;transform:none}
+.agent-input>button:first-child .ref-icon{position:relative;inset:auto;width:17.275002px;height:16.278573px;transform:none}
+.agent-input>button:last-child .ref-icon{position:relative;inset:auto;width:13.953573px;height:7.975001px;transform:none}
+.agent-input>button:first-child{display:flex;align-items:center;justify-content:center;width:24px;padding:0}
+.agent-close>.agent-x{font-size:0;line-height:0;transform:none}
+}
