@@ -1,0 +1,75 @@
+/* The 0.4 native sticky principle, scoped to the four original situation cards. */
+@media screen and (min-width: 1025px) and (prefers-reduced-motion: no-preference) {
+  #situations[data-case-stack-mode="stack"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: max-content;
+    align-content: start;
+  }
+  #situations[data-case-stack-mode="stack"] > .situation-list {
+    grid-area: 1 / 1;
+    align-self: start;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: 12px;
+  }
+  #situations[data-case-stack-mode="stack"] > :is(h2, .situations-intro) {
+    position: sticky;
+    grid-area: 1 / 1;
+    align-self: start;
+    justify-self: start;
+    left: auto;
+    right: auto;
+    margin-right: 0;
+    z-index: 10;
+  }
+  #situations[data-case-stack-mode="stack"] > h2 {
+    top: var(--case-context-heading-pin-top);
+    width: var(--case-context-heading-width);
+    height: var(--case-context-heading-height);
+    margin-top: calc(var(--case-context-heading-normal-top) - var(--case-context-padding-top));
+    margin-left: var(--case-context-heading-normal-left);
+    margin-bottom: var(--case-context-heading-reserve);
+  }
+  #situations[data-case-stack-mode="stack"] > .situations-intro {
+    top: var(--case-context-intro-pin-top);
+    width: var(--case-context-intro-width);
+    height: var(--case-context-intro-height);
+    margin-top: calc(var(--case-context-intro-normal-top) - var(--case-context-padding-top));
+    margin-left: var(--case-context-intro-normal-left);
+    margin-bottom: var(--case-context-intro-reserve);
+  }
+  #situations[data-case-stack-mode="stack"] .situation-list > li,
+  #situations[data-case-stack-mode="stack"] .situation-item,
+  #situations[data-case-stack-mode="stack"] .situation-item::details-content { display: contents; }
+  #situations[data-case-stack-mode="stack"] .situation-item > summary {
+    position: sticky;
+    top: var(--case-stack-header-top);
+    grid-column: 1;
+    grid-row: var(--case-stack-header-row);
+    min-height: var(--case-stack-header-height);
+    margin-bottom: var(--case-stack-gap);
+    background: var(--yellow);
+    z-index: calc(20 + var(--case-stack-index));
+  }
+  #situations[data-case-stack-mode="stack"] .situation-item > .slider-reveal {
+    position: sticky;
+    top: var(--case-stack-body-top);
+    grid-column: 1;
+    grid-row: var(--case-stack-body-row);
+    height: auto !important;
+    min-height: var(--case-stack-body-height);
+    overflow: hidden;
+    background: var(--yellow);
+    z-index: calc(2 + var(--case-stack-index));
+    clip-path: inset(var(--case-stack-clip-top, 0px) 0 var(--case-stack-clip-bottom, 0px) 0) !important;
+  }
+  #situations[data-case-stack-mode="stack"] .situation-item:not([open]) > .slider-reveal { display: none; }
+  #situations[data-case-stack-mode="stack"] .situation-item[data-case-stack-folded="true"][open] > summary .case-plus::after {
+    content: "+";
+  }
+  #situations[data-case-stack-mode="stack"] [data-case-stack-clip="hidden"] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

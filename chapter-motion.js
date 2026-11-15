@@ -24,8 +24,8 @@
       || new URLSearchParams(location.search).has('editor_view');
 
     const configurations = {
-      situations: { svg: '.situations-window .frame-skin', logo: '.situations-logo', join: 'situations',
-        nodes: ':scope > .section-label, :scope > h2, .situations-intro, .situation-list > li' },
+      situations: { svg: '.situations-window .frame-skin', logo: '.situations-logo', join: 'situations', caseStack: true,
+        nodes: ':scope > .section-label, :scope > h2, .situations-intro, .situation-item > summary, .situation-item > .slider-reveal' },
       bureau: { nodes: ':scope > .section-label, :scope > h2, :scope > blockquote, .precedent-grid > *' },
       practice: { svg: '.process-outline', process: true,
         nodes: '.process-figure, :scope > .section-label, :scope > h2, .practice-intro, .process-terms, .step-details > summary, .step-details > .slider-reveal, .process-contact' },
@@ -257,7 +257,7 @@
         return {gap:clamp(upperBox.top-svg.getBoundingClientRect().top,0,length-end),end};
       }
       const relative = node => {
-        const rect = node.getBoundingClientRect(),origin=record.config.process?svg.getBoundingClientRect():box;
+        const rect = node.getBoundingClientRect(),origin=record.config.process||record.config.caseStack?svg.getBoundingClientRect():box;
         return { top: rect.top - origin.top, left: rect.left - origin.left, right: rect.right - origin.left,
           width: rect.width, height: rect.height };
       };
@@ -280,7 +280,7 @@
           route.style.strokeDashoffset = String(Math.max(0, length - routeDistance));
           svg.dataset.kbChapterProgress = String(clamp(distance / logicalLength));
           nodes.forEach(item => {
-            const at=record.config.process?rightStart+clamp(relative(item.node).top-y0-r,0,y1-y0-2*r):item.at;
+            const at=record.config.process||record.config.caseStack?rightStart+clamp(relative(item.node).top-y0-r,0,y1-y0-2*r):item.at;
             if (routeDistance >= at) reveal(record, item.node, false, true);
           });
           if (routeDistance >= logoAt) reveal(record, record.logo, false, record.config.topLogo);
@@ -317,7 +317,7 @@
       const box = record.svg.getBoundingClientRect();
       if (Math.abs(box.width - renderer.width) > .5 || Math.abs(box.height - renderer.height) > .5
         || renderer.original.getAttribute('d') !== renderer.originalD) {
-        if (!record.config.process) { finishRecord(record); return; }
+        if (!record.config.process && !record.config.caseStack) { finishRecord(record); return; }
         // Its inline steps grow while the front travels: retain time/distance and
         // already revealed rows, but rebuild only after geometry publishes its new d.
         if (renderer.original.getAttribute('d') === renderer.originalD) return;
