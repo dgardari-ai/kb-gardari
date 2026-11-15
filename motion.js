@@ -43,6 +43,15 @@
         || new URLSearchParams(location.search).has('editor_view');
     }
 
+    function suppressInitialAnchorScroll() {
+      if (!initialRootAnchor || staticMode || scrollY <= 0) return false;
+      // Fragment scrolling may arrive after pageshow. Only real intent releases
+      // the initial #top/#main guard, so that delayed jump cannot end the intro.
+      scrollTo({ top: 0, behavior: 'instant' });
+      hasScrolled = false;
+      return true;
+    }
+
     function clock() {
       return (pausedAt === null ? performance.now() : pausedAt) - epoch - pausedDuration;
     }
@@ -176,6 +185,7 @@
 
     function updateScroll() {
       if (staticMode || !main) return;
+      suppressInitialAnchorScroll();
       // A person's scroll also wins while fonts are still loading, before entrance starts.
       if (!introDone && !initialRootAnchor && scrollY > 1) finishEntrance();
       const heroRect = hero.getBoundingClientRect();
@@ -407,15 +417,19 @@
         const w = frame.width, h = frame.height;
         if (!w || !h || !originalPath.getAttribute('d')) return null;
         const r = Math.min(26 * w / 964, (w - 1) / 2, (h - 1) / 2);
+        const report = window.KBFrameGeometry?.measure?.().find(item => item.className?.includes('hero-window'));
+        const bandJoin = report?.joins?.find(join => join.name === 'hero-band' && join.status === 'joined');
         // Computed layout dimensions keep fractional authored edges while scaleX is in flight.
         const bandStyle = getComputedStyle(band);
-        const bandLeft = parseFloat(bandStyle.left);
-        const bandRight = bandLeft + parseFloat(bandStyle.width);
+        const bandBox = band.getBoundingClientRect();
+        const bandLeft = bandJoin?.gap[0] ?? bandBox.left - frame.left;
+        const bandRight = bandJoin?.gap[1] ?? bandLeft + parseFloat(bandStyle.width);
+        const y0 = report?.pathTop ?? bandBox.top - frame.top + (parseFloat(getComputedStyle(originalPath).strokeWidth) || 1) / 2;
         const from = Math.max(r, Math.min(w - r, bandRight));
         const to = Math.max(r, Math.min(w - r, bandLeft));
-        const routeD = `M${from},0H${w-r}A${r},${r} 0 0 1 ${w},${r}`
+        const routeD = `M${from},${y0}H${w-r}A${r},${r} 0 0 1 ${w},${y0+r}`
           + `V${h-r}A${r},${r} 0 0 1 ${w-r},${h}H${r}`
-          + `A${r},${r} 0 0 1 0,${h-r}V${r}A${r},${r} 0 0 1 ${r},0H${to}`;
+          + `A${r},${r} 0 0 1 0,${h-r}V${y0+r}A${r},${r} 0 0 1 ${r},${y0}H${to}`;
         const defs = document.createElementNS(ns, 'defs');
         const mask = document.createElementNS(ns, 'mask');
         mask.id = 'kb-hero-clockwise-mask';
@@ -438,14 +452,13 @@
         svg.dataset.kbBorder = 'drawing';
         const quarter = Math.PI * r / 2;
         const rightStart = w - r - from + quarter;
-        const bottomStart = rightStart + h - 2 * r + quarter;
+        const bottomStart = rightStart + h - y0 - 2 * r + quarter;
         const relative = node => {
           const rect = node.getBoundingClientRect();
           return { top: rect.top - frame.top, left: rect.left - frame.left,
             right: rect.right - frame.left, height: rect.height, width: rect.width };
         };
         const figureBox = relative(figure), logoBox = relative(logo);
-        const report = window.KBFrameGeometry?.measure?.().find(item => item.className?.includes('hero-window'));
         const logoRight = report?.joins?.find(join => join.name === 'hero')?.silhouette?.[1] ?? logoBox.right;
         const events = [
           ['.brand-hero', revealBrand],
@@ -455,7 +468,7 @@
           ['.hero-contact', null]
         ].map(([selector, action]) => {
           const node = hero.querySelector('.hero-scene ' + selector);
-          return { node, action, at: rightStart + Math.max(0, Math.min(h - 2*r, relative(node).top - r)), fired: false };
+          return { node, action, at: rightStart + Math.max(0, Math.min(h - y0 - 2*r, relative(node).top - y0 - r)), fired: false };
         }).sort((a,b) => a.at - b.at);
         let cleaned = false;
         function cleanup() {
@@ -476,7 +489,7 @@
           else if (distance < bottomStart) hero.dataset.kbTraceStage = 'right';
           else if (distance < bottomStart + w - 2*r) hero.dataset.kbTraceStage = 'bottom';
           else hero.dataset.kbTraceStage = 'left';
-          const currentY = distance >= bottomStart ? h : r + Math.max(0, distance - rightStart);
+          const currentY = distance >= bottomStart ? h : y0 + r + Math.max(0, distance - rightStart);
           const figureProgress = clamp((currentY - figureBox.top) / figureBox.height);
           if (figureProgress > 0) {
             figure.dataset.kbEntrance = 'shown';
@@ -591,16 +604,17 @@
     updateScroll();
 
     // Only suppress the browser's first #top/#main jump, never a person's scroll.
-    const releaseInitialAnchor = () => { initialRootAnchor = false; };
+    function releaseInitialAnchor() { initialRootAnchor = false; }
     addEventListener('wheel', releaseInitialAnchor, { passive: true, signal });
+    addEventListener('touchstart', releaseInitialAnchor, { passive: true, signal });
     addEventListener('touchmove', releaseInitialAnchor, { passive: true, signal });
     addEventListener('keydown', event => {
-      if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) releaseInitialAnchor();
+      if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Tab', 'Enter'].includes(event.key)) releaseInitialAnchor();
     }, { signal });
     addEventListener('pointerdown', event => {
-      if (event.clientX >= document.documentElement.clientWidth) releaseInitialAnchor();
+      if (event.pointerType !== 'touch' && event.clientX >= document.documentElement.clientWidth - 24) releaseInitialAnchor();
     }, { passive: true, signal });
-    addEventListener('scroll', schedule, { passive: true, signal });
+    addEventListener('scroll', () => { suppressInitialAnchorScroll(); schedule(); }, { passive: true, signal });
     addEventListener('resize', queueLayout, { passive: true, signal });
     addEventListener('hashchange', () => {
       // Following a deep link reveals its target before native anchor scrolling.
@@ -609,6 +623,7 @@
     }, { signal });
     document.addEventListener('click', event => {
       const link = event.target instanceof Element ? event.target.closest('a[href^="#"]') : null;
+      if (link) releaseInitialAnchor();
       if (link && !rootHash(link.hash)) showAll();
     }, { capture: true, signal });
     reduced.addEventListener('change', () => { if (reduced.matches) showAll({ resetPosition: true }); }, { signal });
@@ -619,7 +634,6 @@
       if (event.persisted) resume();
       if (initialRootAnchor) {
         scrollTo({ top: 0, behavior: 'instant' });
-        initialRootAnchor = false;
         hasScrolled = false;
         centerScene(false);
         schedule();

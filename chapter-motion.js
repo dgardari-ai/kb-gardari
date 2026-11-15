@@ -28,13 +28,13 @@
         nodes: ':scope > .section-label, :scope > h2, .situations-intro, .situation-list > li' },
       bureau: { nodes: ':scope > .section-label, :scope > h2, :scope > blockquote, .precedent-grid > *' },
       practice: { svg: '.process-outline', process: true,
-        nodes: '.process-figure, :scope > .section-label, :scope > h2, .practice-intro, .process-timeline > .process-row, .process-contact' },
+        nodes: '.process-figure, :scope > .section-label, :scope > h2, .practice-intro, .process-terms, .step-details > summary, .step-details > .slider-reveal, .process-contact' },
       projects: { nodes: ':scope > .section-label, :scope > h2, .projects-intro, .project-grid > *' },
       author: { nodes: ':scope > .section-label, .author-logo, .author-row' },
       questions: { svg: '.faq-window .frame-skin', nodes: '.faq-window > .section-label, .faq-window > h2, .faq-item, .faq-contact' },
-      contact: { svg: '.footer-window .frame-skin', logo: '.footer-logo', join: 'footer', topLogo: true,
+      contact: { svg: '.footer-window .frame-skin', logo: '.footer-logo', join: 'footer', topLogo: true, logoFirst: true,
         nodes: '.brand-footer, .footer-terms, .footer-marker, .contact-card, .legal-footer' },
-      'agent-dialog': { svg: '.agent-window .frame-skin', logo: '.agent-logo', join: 'agent', dialog: true,
+      'agent-dialog': { svg: '.agent-window .frame-skin', logo: '.agent-logo', join: 'agent', dialog: true, traceSpeed: 2.1,
         nodes: '.agent-description, .agent-input, .agent-close' }
     };
 
@@ -63,6 +63,14 @@
       .filter(record => record && !record.config.dialog);
     const overlayOpen = () => !!document.querySelector('dialog[open]');
     const settled = record => !record.effects.size && !record.rings.size;
+    const traceSpeed = record => record.config.traceSpeed || .7;
+    function frameState(record,state) {
+      if(record.svg)record.svg.dataset.kbChapterFrame=state;
+      if(record.config.process){
+        const upper=record.element.querySelector('.process-context-outline');
+        if(upper)upper.dataset.kbChapterFrame=state;
+      }
+    }
 
     function queueState() {
       if (!main) return;
@@ -88,7 +96,7 @@
       record.element.dataset.kbChapterState = 'waiting';
       record.nodes.forEach(node => { node.dataset.kbChapterNode = 'waiting'; });
       if (record.logo) record.logo.dataset.kbChapterNode = 'waiting';
-      if (record.svg) record.svg.dataset.kbChapterFrame = 'waiting';
+      frameState(record,'waiting');
     }
     function cleanupRenderer(record) {
       record.renderer?.cleanup(); record.renderer = null;
@@ -105,7 +113,7 @@
       [...record.nodes, record.logo].filter(Boolean).forEach(node => {
         node.dataset.kbChapterNode = 'shown'; record.shown.add(node);
       });
-      if (record.svg) record.svg.dataset.kbChapterFrame = 'shown';
+      frameState(record,'shown');
       record.phase = 'done'; record.element.dataset.kbChapterState = 'done';
       observer?.unobserve(record.element);
       if (wasActive) { activeChapter = null; latchQueue(); }
@@ -123,6 +131,7 @@
       };
       effect.finished.then(cleanup, () => {
         record.effects.delete(effect); effects.delete(effect); paused.delete(effect);
+        if (token === record.token) schedule();
       });
       return effect;
     }
@@ -168,8 +177,8 @@
         if (activeChapter && activeChapter !== record) return;
         activeChapter = record; forwardPermit = false;
       }
-      record.phase = 'tracing'; record.start = clock();
-      record.element.dataset.kbChapterState = 'tracing';
+      record.phase = record.config.logoFirst && record.logo ? 'logo' : 'tracing'; record.start = clock();
+      record.element.dataset.kbChapterState = record.phase;
       record.size = record.element.getBoundingClientRect();
       const frameBox = record.svg?.getBoundingClientRect();
       record.frameVisible = !!frameBox && frameBox.width > 1 && frameBox.height > 1;
@@ -177,6 +186,8 @@
       record.nodes.forEach(node => {
         if (node.contains(document.activeElement)) reveal(record, node, true);
       });
+      // The footer frame originates in its already visible large logo.
+      if (record.phase === 'logo') reveal(record, record.logo, false, true);
       announce(record);
       queueState();
       schedule();
@@ -193,9 +204,11 @@
       const viewBox = (svg.getAttribute('viewBox') || '').split(/\s+/).map(Number);
       if (w <= 1 || h <= 1 || Math.abs(viewBox[2] - w) > .6 || Math.abs(viewBox[3] - h) > .6) return null;
       const report = measureReport(record, w, h);
-      const inset = report?.pathInset ?? (record.config.dialog ? .5 : 0);
-      const x0 = inset, y0 = inset, x1 = w - inset, y1 = h - inset;
-      const r = Math.min(26 * w / (record.config.process ? 708.91 : 964), (w - 1) / 2, (h - 1) / 2);
+      const inset = report?.pathInset ?? (record.config.dialog ? (parseFloat(getComputedStyle(original).strokeWidth) || 1) / 2 : 0);
+      const x0 = inset, x1 = w - inset, y1 = h - inset;
+      const y0 = (record.config.process || record.config.topLogo) && Number.isFinite(report?.pathTop) ? report.pathTop : inset;
+      const radiusHeight = record.config.process ? y1 - y0 : h;
+      const r = Math.max(0, Math.min(26 * w / (record.config.process ? 708.91 : 964), (w - 1) / 2, (radiusHeight - 1) / 2));
       const join = report?.joins?.find(item => item.name === record.config.join && item.status === 'joined');
       let topGap = (svg.dataset.topGap || '').split(',').map(Number);
       topGap = topGap.length === 2 && topGap.every(Number.isFinite) ? topGap.map(n => n * w / 964) : null;
@@ -220,34 +233,57 @@
       mask.append(route); defs.append(mask); svg.append(defs); // Original path remains first for geometry.paint().
       const length = route.getTotalLength(), previousMask = original.getAttribute('mask');
       route.style.strokeDasharray = `${length} ${length}`; route.style.strokeDashoffset = String(length);
-      original.setAttribute('mask', `url(#${mask.id})`); svg.dataset.kbChapterFrame = 'tracing';
+      original.setAttribute('mask', `url(#${mask.id})`); frameState(record,'tracing');
       const quarter = Math.PI * r / 2;
       const rightStart = (record.config.process ? x1 - r - x0 : x1 - r - from) + quarter;
       const bottomStart = rightStart + y1 - y0 - 2 * r + quarter;
+      // The FAQ's bottom CTA removes a real piece of the visible frame. Do not
+      // spend trace time crossing that empty gap: the visible front would stop.
+      const faqGap = record.element.id === 'questions'
+        ? report?.joins?.find(item => item.name === 'faq-cta' && item.status === 'joined')?.gap : null;
+      const skipFrom = faqGap ? clamp(bottomStart + x1 - r - faqGap[1], 0, length) : length;
+      const skipTo = faqGap ? clamp(bottomStart + x1 - r - faqGap[0], skipFrom, length) : length;
+      const invisibleLength = skipTo - skipFrom, visibleLength = length - invisibleLength;
+      // The native upper fragment contains the top edge, corner, and a piece of
+      // the right side. Its end is the seam with the normal-flow lower frame.
+      function nativeSpan(){
+        const upper=record.config.process?record.element.querySelector('.process-context-outline'):null;
+        const upperBox=upper?.getBoundingClientRect(),upperHeight=upperBox?.height||0;
+        if(!upper||record.element.dataset.processStackMode!=='stack'||upperHeight<=0)return {gap:0,end:length};
+        // Reconfiguration can replace the skin without changing the source d.
+        const end=clamp(upperHeight<r
+          ?x1-r-x0+r*(Math.asin(clamp((upperHeight-r)/r,-1,1))+Math.PI/2)
+          :rightStart+clamp(upperHeight-y0-r,0,y1-y0-2*r),0,length);
+        return {gap:clamp(upperBox.top-svg.getBoundingClientRect().top,0,length-end),end};
+      }
       const relative = node => {
-        const rect = node.getBoundingClientRect();
-        return { top: rect.top - box.top, left: rect.left - box.left, right: rect.right - box.left,
+        const rect = node.getBoundingClientRect(),origin=record.config.process?svg.getBoundingClientRect():box;
+        return { top: rect.top - origin.top, left: rect.left - origin.left, right: rect.right - origin.left,
           width: rect.width, height: rect.height };
       };
       const nodes = record.nodes.map(node => ({ node, box: relative(node) })).map(item => ({ ...item,
         at: item.node.matches('.legal-footer') ? length : rightStart + clamp(item.box.top - y0 - r, 0, y1 - y0 - 2 * r) }));
       const logoBox = record.logo ? relative(record.logo) : null;
-      const logoAt = !logoBox ? Infinity : record.config.topLogo ? length
+      const logoAt = !logoBox ? Infinity : record.config.logoFirst ? 0 : record.config.topLogo ? length
         : bottomStart + Math.max(0, x1 - r - (join?.silhouette?.[1] ?? logoBox.right));
       let cleaned = false;
-      return { length, width: w, height: h, original, originalD,
+      return { get length(){return visibleLength-nativeSpan().gap;}, width: w, height: h, original, originalD,
         cleanup() {
           if (cleaned) return; cleaned = true;
           if (previousMask === null) original.removeAttribute('mask'); else original.setAttribute('mask', previousMask);
-          defs.remove(); svg.dataset.kbChapterFrame = 'shown';
+          defs.remove(); frameState(record,'shown');
         },
         draw(distance) {
-          route.style.strokeDashoffset = String(Math.max(0, length - distance));
-          svg.dataset.kbChapterProgress = String(clamp(distance / length));
+          const span=nativeSpan(),gap=span.gap,logicalLength=visibleLength-gap;
+          const removed=record.config.process?(distance>=span.end?gap:0):(distance>=skipFrom?invisibleLength:0);
+          const routeDistance = Math.min(length, distance + removed);
+          route.style.strokeDashoffset = String(Math.max(0, length - routeDistance));
+          svg.dataset.kbChapterProgress = String(clamp(distance / logicalLength));
           nodes.forEach(item => {
-            if (distance >= item.at) reveal(record, item.node, false, true);
+            const at=record.config.process?rightStart+clamp(relative(item.node).top-y0-r,0,y1-y0-2*r):item.at;
+            if (routeDistance >= at) reveal(record, item.node, false, true);
           });
-          if (distance >= logoAt) reveal(record, record.logo, false, record.config.topLogo);
+          if (routeDistance >= logoAt) reveal(record, record.logo, false, record.config.topLogo);
         }
       };
     }
@@ -266,7 +302,7 @@
     }
     function updateFrame(record, time) {
       if (record.config.process) {
-        record.nodes.filter(node => !node.matches('.process-row, .process-contact'))
+        record.nodes.filter(node => !node.matches('.process-terms, .step-details > summary, .step-details > .slider-reveal, .process-contact'))
           .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
           .forEach((node, index) => { if (time - record.start >= index * 110) reveal(record, node); });
         if (time - record.start < 650) return;
@@ -289,7 +325,7 @@
         if (Math.abs(viewBox[2] - box.width) > .6 || Math.abs(viewBox[3] - box.height) > .6) {
           // Height effects can run one frame ahead of geometry. Keep the live mask
           // until both describe the same frame instead of ending the whole chapter.
-          renderer.draw(Math.min(renderer.length, (time - record.traceStart) * .7));
+          renderer.draw(Math.min(renderer.length, (time - record.traceStart) * traceSpeed(record)));
           return;
         }
         cleanupRenderer(record);
@@ -297,7 +333,7 @@
         if (!record.renderer) { finishRecord(record); return; }
         renderer = record.renderer;
       }
-      const distance = Math.min(renderer.length, (time - record.traceStart) * .7);
+      const distance = Math.min(renderer.length, (time - record.traceStart) * traceSpeed(record));
       renderer.draw(distance);
       if (distance >= renderer.length) {
         cleanupRenderer(record);
@@ -309,6 +345,10 @@
 
     function advance(record, time) {
       try {
+        if (record.phase === 'logo' && settled(record)) {
+          record.phase = 'tracing'; record.element.dataset.kbChapterState = 'tracing';
+          record.start = time; record.traceStart = null;
+        }
         if (record.phase === 'tracing') {
           if (record.frameVisible) updateFrame(record, time); else updateFlow(record, time);
         }
@@ -356,8 +396,8 @@
       if (disposed || document.hidden) return;
       update();
       const now = clock();
-      if ([...records.values()].some(record => record.phase === 'tracing'
-        && (record.frameVisible || now - record.start < 500))) schedule();
+      if ([...records.values()].some(record => record.phase === 'logo'
+        || record.phase === 'tracing' && (record.frameVisible || now - record.start < 500))) schedule();
     }
 
     function start() {

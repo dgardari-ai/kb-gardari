@@ -1,4 +1,27 @@
+/* Structural targets and the agent's entry focus do not draw an extra frame.
+   Interactive controls and the skip link retain their visible focus styles. */
+.page-shell[tabindex="-1"]:focus,
+.page-shell :is(section.chapter, footer.chapter, article[id], h1[id], h2[id], details.faq-item[id])[tabindex="-1"]:not([contenteditable]):focus,
+.agent-dialog[tabindex="-1"]:focus {
+  outline: none;
+}
+
 /* Display faces use capitals; serif copy and its weights remain authored. */
+.hero-disciplines { white-space: nowrap; }
+@media (min-width: 761px) {
+  /* Keep the original right edge (964 - 532.84 - 231), allowing a longer word. */
+  .hero-disciplines {
+    top: calc(526 * var(--u));
+    left: auto;
+    right: calc(200.16 * var(--u));
+    width: max-content;
+  }
+}
+@media (max-width: 360px) {
+  /* Leave a small gap beside the longer science label on the narrow phone. */
+  .hero-logo { left: 22px; }
+}
+
 .hero h1,
 .chapter > h1,
 .chapter > h2,

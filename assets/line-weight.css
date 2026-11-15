@@ -1,0 +1,37 @@
+/* Accepted KB2 contours and dotted guides, 2026-11-14. */
+:root { --kb-line-width: 1.5px; }
+.frame-skin path, .process-outline path { stroke-width: var(--kb-line-width); }
+.pill, .step-number, .detail-dialog, .contact-dialog, .contact-dialog textarea,
+.agent-input, .legal-dialog, .brand-orb, .brand-capsule { border-width: var(--kb-line-width); }
+/* Keep the authentic brand artwork at its previous size inside the heavier ring. */
+.brand-orb img {
+  width: calc(100% + 1px); height: calc(100% + 1px); max-width: none;
+  margin: -.5px;
+}
+/* Reduce dot diameters by 25%; retain their period, axes and vertical phase. */
+.situation-list .case-summary > .leader,
+.faq-list .faq-item > summary > .leader {
+  height: calc(2.615625 * var(--u));
+  background-image: radial-gradient(ellipse calc(1.28705625 * var(--u)) calc(1.3078125 * var(--u)) at center, var(--ink) 94%, transparent 100%);
+  background-size: calc(7.03022 * var(--u)) calc(2.615625 * var(--u));
+}
+@media (min-width: 761px) {
+  .process-row:before {
+    left: calc(316.5746875 * var(--u)); width: calc(2.615625 * var(--u));
+    background-image: radial-gradient(ellipse calc(1.3078125 * var(--u)) calc(1.28705625 * var(--u)) at center calc(1.716075 * var(--u)), var(--ink) 94%, transparent 100%);
+    background-size: calc(2.615625 * var(--u)) calc(7.03022 * var(--u));
+  }
+}
+@media (max-width: 760px) {
+  .situation-list .case-summary > .leader,
+  .faq-list .faq-item > summary > .leader {
+    height: 2.615625px;
+    background-image: radial-gradient(ellipse 1.28705625px 1.3078125px at center, var(--ink) 94%, transparent 100%);
+    background-size: 7.03022px 2.615625px;
+  }
+  .process-timeline:before {
+    left: 18.8546875px; width: 2.615625px;
+    background-image: radial-gradient(ellipse 1.3078125px 1.28705625px at center 1.716075px, var(--ink) 94%, transparent 100%);
+    background-size: 2.615625px 7.03022px;
+  }
+}

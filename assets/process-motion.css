@@ -1,17 +1,173 @@
-/* Stage bodies move inside their existing padding; no pinned scene or type changes. */
+/* KB1 situations donor: native independent sticky headers and bodies.
+   The authored five-stage content stays in DOM and normal flow on narrow/static views. */
 #practice .step-details[data-step-scroll-managed] > .slider-reveal > .step-content {
-  transform: translate3d(0, var(--step-scroll-offset, 0px), 0);
-  transform-origin: top left;
+  transform: none;
 }
-
-html.kb-editor-editing #practice .step-content,
-html.vmg-editor-editing #practice .step-content,
-body.kb-editor-editing #practice .step-content {
-  transform: none !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #practice .step-details[data-step-scroll-managed] > .slider-reveal > .step-content {
-    transform: none !important;
+@media screen and (min-width:1025px) and (prefers-reduced-motion:no-preference) {
+  /* Original direct-child context nodes share the native timeline grid area.
+     Their layout-time margins preserve the authored initial geometry. */
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: max-content;
+    grid-auto-rows: max-content;
+    align-content: start;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .process-timeline {
+    grid-area: 1 / 1;
+    align-self: start;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > h2,
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .practice-intro,
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .process-figure,
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .kb-ring-overlay,
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .process-context-skin {
+    position: sticky;
+    grid-area: 1 / 1;
+    align-self: start;
+    justify-self: start;
+    left: auto;
+    right: auto;
+    translate: none;
+    margin-right: 0;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > h2 {
+    top: var(--process-context-heading-pin-top);
+    width: var(--process-context-heading-width);
+    height: var(--process-context-heading-height);
+    margin-top: calc(var(--process-context-heading-normal-top) - var(--process-context-padding-top));
+    margin-left: var(--process-context-heading-normal-left);
+    margin-bottom: var(--process-context-heading-reserve);
+    z-index: 10;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .practice-intro {
+    top: var(--process-context-intro-pin-top);
+    width: var(--process-context-intro-width);
+    height: var(--process-context-intro-height);
+    margin-top: calc(var(--process-context-intro-normal-top) - var(--process-context-padding-top));
+    margin-left: var(--process-context-intro-normal-left);
+    margin-bottom: var(--process-context-intro-reserve);
+    z-index: 10;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .process-figure,
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .kb-ring-overlay {
+    top: var(--process-context-figure-pin-top);
+    width: var(--process-context-figure-width);
+    height: var(--process-context-figure-height);
+    margin-top: calc(var(--process-context-figure-normal-top) - var(--process-context-padding-top));
+    margin-left: var(--process-context-figure-normal-left);
+    margin-bottom: var(--process-context-figure-reserve);
+    z-index: 8;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .kb-ring-overlay {
+    position: sticky !important;
+    top: var(--process-context-figure-pin-top) !important;
+    left: auto !important;
+    width: var(--process-context-figure-width) !important;
+    height: var(--process-context-figure-height) !important;
+    z-index: 9;
+  }
+  #practice > .process-context-skin { display: none; }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .process-context-skin {
+    display: block;
+    top: var(--process-context-skin-pin-top);
+    width: var(--process-context-skin-width);
+    height: var(--process-context-skin-height);
+    margin-top: calc(var(--process-context-skin-normal-top) - var(--process-context-padding-top));
+    margin-left: 0;
+    margin-bottom: var(--process-context-skin-reserve);
+    padding: 0;
+    border: 0;
+    background: var(--yellow);
+    box-shadow: 1px 0 0 var(--yellow);
+    pointer-events: none;
+    overflow: visible;
+    z-index: 6;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-context-native="true"] > .section-label { z-index: 11; }
+  #practice[data-process-stack-mode="stack"] .process-timeline {
+    display: grid;
+    grid-template-columns: calc(269 * var(--u)) minmax(0, 1fr);
+    column-gap: calc(24.56 * var(--u));
+    align-items: start;
+    padding-bottom: 12px;
+  }
+  #practice[data-process-stack-mode="stack"][data-process-stack-end-packed="true"] .process-timeline:after {
+    visibility: hidden;
+  }
+  #practice[data-process-stack-mode="stack"] .process-row,
+  #practice[data-process-stack-mode="stack"] .process-main,
+  #practice[data-process-stack-mode="stack"] .step-details { display: contents; }
+  #practice[data-process-stack-mode="stack"] .step-details::details-content { display: contents; }
+  #practice[data-process-stack-mode="stack"] .process-row:before,
+  #practice[data-process-stack-mode="stack"] .process-end { display: none; }
+  #practice[data-process-stack-mode="stack"] .step-details > summary {
+    grid-column: 2;
+    grid-row: var(--process-stack-header-row);
+    position: sticky;
+    top: var(--process-stack-header-top);
+    min-height: var(--process-stack-header-height);
+    margin-bottom: var(--process-stack-gap);
+    margin-right: calc(30 * var(--u));
+    background: var(--yellow);
+    z-index: calc(20 + var(--process-stack-index));
+    isolation: isolate;
+  }
+  #practice[data-process-stack-mode="stack"] .step-details > summary:after {
+    content: "";
+    position: absolute;
+    right: calc(-30 * var(--u));
+    top: calc(17.45 * var(--u));
+    width: calc(15.1174 * var(--u));
+    height: calc(15.555 * var(--u));
+    background: var(--ink);
+  }
+  #practice[data-process-stack-mode="stack"] .step-details > .slider-reveal {
+    grid-column: 2;
+    grid-row: var(--process-stack-body-row);
+    position: sticky;
+    top: var(--process-stack-body-top);
+    min-height: var(--process-stack-body-height);
+    margin-right: calc(30 * var(--u));
+    background: var(--yellow);
+    z-index: calc(2 + var(--process-stack-index));
+    overflow: hidden;
+  }
+  #practice[data-process-stack-mode="stack"] .step-details:not([open]) > .slider-reveal { display: none; }
+  #practice[data-process-stack-mode="stack"] .step-details > .slider-reveal:before {
+    content: "";
+    position: absolute;
+    left: var(--process-stack-dot-left);
+    top: var(--process-stack-dot-top);
+    bottom: 0;
+    width: var(--process-stack-dot-width);
+    background-image: var(--process-stack-dot-image);
+    background-size: var(--process-stack-dot-size);
+    background-repeat: repeat-y;
+    pointer-events: none;
+  }
+  /* Both columns are cut against one viewport band, including the approach
+     of the next header before it reaches its final sticky position. */
+  #practice[data-process-stack-mode="stack"] .step-details > .slider-reveal,
+  #practice[data-process-stack-mode="stack"] .process-terms {
+    clip-path: inset(var(--process-stack-clip-top, 0px) 0 var(--process-stack-clip-bottom, 0px) 0) !important;
+  }
+  #practice[data-process-stack-mode="stack"] [data-process-stack-clip="hidden"] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  #practice[data-process-stack-mode="stack"] .process-terms {
+    grid-column: 1;
+    grid-row: var(--process-stack-body-row);
+    position: sticky;
+    top: var(--process-stack-terms-top);
+    margin-top: var(--process-stack-terms-offset) !important;
+    min-height: calc(var(--process-stack-body-height) - var(--process-stack-terms-offset));
+    background: var(--yellow);
+    z-index: calc(2 + var(--process-stack-index));
+    align-self: start;
   }
 }
+html.kb-editor-editing #practice .step-content,
+html.vmg-editor-editing #practice .step-content,
+body.kb-editor-editing #practice .step-content { transform: none !important; }
