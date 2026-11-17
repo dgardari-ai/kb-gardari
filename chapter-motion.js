@@ -8,6 +8,8 @@
     let started = false, chapterStatic = false, dialogsEnabled = true, disposed = false;
     let frame = null, observer = null, serial = 0;
     let activeChapter = null, heroCompleted = false, forwardPermit = false, overlayWasOpen = false;
+    let entryRequest = null, entryOnStart = false;
+    let rapidUntil = -Infinity, scrollTrail = [];
     let intentRevision = 0, forwardRevision = 0, completionRevision = 0, completedAt = 0;
     let lastScrollPosition = scrollY, lastScrollAt = -Infinity, fallbackSuppressedUntil = 0;
     let lastWheelAt = -Infinity, lastWheelDirection = 0, touchActive = false, touchY = 0, touchRevision = 0;
@@ -50,7 +52,7 @@
       const record = { element, config, nodes: [...element.querySelectorAll(config.nodes)],
         svg: config.svg ? element.querySelector(config.svg) : null,
         logo: config.logo ? element.querySelector(config.logo) : null,
-        phase: 'idle', announced: false, renderer: null, effects: new Set(), start: 0,
+        phase: 'idle', announced: false, renderer: null, effects: new Set(), start: 0, catchUpAt: null, catchUpDistance: 0, traceDistance: 0,
         shown: new Set(), rings: new Map(), token: 0, pulseStarted: false, size: null };
       records.set(element, record);
       return record;
@@ -93,6 +95,8 @@
     function arm(record) {
       record.token += 1;
       record.phase = 'waiting'; record.renderer = null; record.traceStart = null; record.shown.clear(); record.pulseStarted = false;
+      record.catchUpAt = null; record.catchUpDistance = 0; record.traceDistance = 0;
+      delete record.element.dataset.kbChapterCatchup;
       record.element.dataset.kbChapterState = 'waiting';
       record.nodes.forEach(node => { node.dataset.kbChapterNode = 'waiting'; });
       if (record.logo) record.logo.dataset.kbChapterNode = 'waiting';
@@ -114,6 +118,7 @@
         node.dataset.kbChapterNode = 'shown'; record.shown.add(node);
       });
       frameState(record,'shown');
+      if (record.svg) record.svg.dataset.kbChapterProgress = '1';
       record.phase = 'done'; record.element.dataset.kbChapterState = 'done';
       observer?.unobserve(record.element);
       if (wasActive) { activeChapter = null; latchQueue(); }
@@ -121,7 +126,7 @@
     }
     function play(record, node, frames, options = {}) {
       if (typeof node.animate !== 'function' || mandatoryStatic()) return null;
-      const effect = node.animate(frames, { duration: 340, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both', ...options });
+      const effect = node.animate(frames, { duration: record.catchUpAt === null ? 340 : 90, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both', ...options });
       const token = record.token;
       record.effects.add(effect); effects.add(effect);
       if (document.hidden) { effect.pause(); paused.add(effect); }
@@ -171,13 +176,14 @@
       ]);
       if (record.config.dialog && node.matches('.agent-input')) pulse(record, instant ? 0 : 360);
     }
-    function begin(record) {
+    function begin(record, rapid = false) {
       if (record.phase !== 'waiting') return;
       if (!record.config.dialog) {
         if (activeChapter && activeChapter !== record) return;
         activeChapter = record; forwardPermit = false;
       }
       record.phase = record.config.logoFirst && record.logo ? 'logo' : 'tracing'; record.start = clock();
+      if (rapid) catchUp(record, record.start);
       record.element.dataset.kbChapterState = record.phase;
       record.size = record.element.getBoundingClientRect();
       const frameBox = record.svg?.getBoundingClientRect();
@@ -296,7 +302,7 @@
       sorted.forEach((node, index) => {
         const box = node.getBoundingClientRect();
         if (box.bottom <= 0) reveal(record, node, true);
-        else if (box.top < innerHeight * .94 && time - record.start >= Math.min(index * 90, 450)) reveal(record, node);
+        else if (box.top < innerHeight * .94 && time - record.start >= (record.catchUpAt === null ? Math.min(index * 90, 450) : 0)) reveal(record, node);
       });
       if (record.nodes.every(node => record.shown.has(node)) && settled(record)) finishRecord(record);
     }
@@ -333,7 +339,11 @@
         if (!record.renderer) { finishRecord(record); return; }
         renderer = record.renderer;
       }
-      const distance = Math.min(renderer.length, (time - record.traceStart) * traceSpeed(record));
+      const normalDistance = (time - record.traceStart) * traceSpeed(record);
+      const catchUpDistance = record.catchUpAt === null ? 0 : record.catchUpDistance
+        + (renderer.length - record.catchUpDistance) * clamp((time - record.catchUpAt) / 300);
+      const distance = Math.min(renderer.length, Math.max(record.traceDistance, normalDistance, catchUpDistance));
+      record.traceDistance = distance;
       renderer.draw(distance);
       if (distance >= renderer.length) {
         cleanupRenderer(record);
@@ -350,6 +360,13 @@
           record.start = time; record.traceStart = null;
         }
         if (record.phase === 'tracing') {
+          if (record.catchUpAt !== null) {
+            // Content already in the reading area must not wait for a long outline.
+            record.nodes.forEach(node => {
+              if (node.getBoundingClientRect().top < innerHeight * .94) reveal(record, node, false, record.frameVisible);
+            });
+            if (time - record.catchUpAt >= 360) { finishRecord(record); return; }
+          }
           if (record.frameVisible) updateFrame(record, time); else updateFlow(record, time);
         }
         if (record.phase === 'settling' && settled(record)) finishRecord(record);
@@ -358,9 +375,65 @@
         finishRecord(record);
       }
     }
+    function catchUp(record, time) {
+      if (!record || record.config.dialog || record.phase === 'done' || record.catchUpAt !== null) return;
+      record.catchUpAt = time; record.catchUpDistance = record.traceDistance;
+      record.element.dataset.kbChapterCatchup = 'scroll';
+      // Keep the footer's logo first, but shorten its remaining reveal as well.
+      record.effects.forEach(effect => { try { effect.updatePlaybackRate(4); } catch {} });
+    }
+    function readingAhead(record) {
+      return record.nodes.some(node => {
+        const box = node.getBoundingClientRect();
+        return !record.shown.has(node) && box.width > 0 && box.height > 0
+          && box.bottom > 0 && box.top < innerHeight * .8;
+      });
+    }
+    function rapidScroll(delta, now) {
+      scrollTrail = scrollTrail.filter(sample => now - sample.time < 200);
+      scrollTrail.push({ time: now, distance: delta });
+      if (scrollTrail.reduce((total, sample) => total + sample.distance, 0) >= innerHeight * .35) rapidUntil = now + 260;
+      return now < rapidUntil;
+    }
+    function entryVisible(record) {
+      if (!record || record.phase !== 'waiting') return false;
+      const box = record.element.getBoundingClientRect();
+      if (box.bottom <= 0 || box.top >= innerHeight * .9) return false;
+      const lead = record.config.logoFirst ? record.logo
+        : record.element.querySelector(':scope > h2, .faq-window > h2, .author-row h3');
+      if (lead && lead.getBoundingClientRect().top >= innerHeight * .94) return false;
+      return [...record.nodes, record.config.logoFirst ? record.logo : null].filter(Boolean).some(node => {
+        const rect = node.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight * .94;
+      });
+    }
+    function enteredChapter() {
+      const visible = chapterQueue.filter(entryVisible);
+      const reading = visible.filter(record => {
+        const box = record.element.getBoundingClientRect();
+        return box.top <= innerHeight * .4 && box.bottom > innerHeight * .2;
+      });
+      return (reading.length ? reading : visible).at(-1) || null;
+    }
+    function admitEntry(time) {
+      const record = entryRequest?.record, rapid = entryRequest?.rapid;
+      if (!entryVisible(record)) { entryRequest = null; return false; }
+      // The visible heading and the person's forward movement admit this chapter.
+      // Do not make a partly visible predecessor hold the reading area blank.
+      const index = chapterQueue.indexOf(record);
+      entryRequest = null;
+      chapterQueue.slice(0, index).forEach(previous => {
+        if (previous.phase !== 'done') finishRecord(previous, true, 'passed');
+      });
+      if (activeChapter) return false;
+      begin(record, rapid); advance(record, time);
+      return true;
+    }
+
     function update() {
       const time = clock(), overlay = overlayOpen();
       if (overlay !== overlayWasOpen) {
+        entryRequest = null; entryOnStart = false; scrollTrail = []; rapidUntil = -Infinity;
         if (activeChapter) finishRecord(activeChapter);
         latchQueue(); overlayWasOpen = overlay;
       }
@@ -370,15 +443,21 @@
       });
       if (!started || chapterStatic || overlay) { queueState(); return; }
       if (readableEnd) {
-        readableEnd = false;
-        chapterQueue.forEach(record => { if (record.phase !== 'done') finishRecord(record, true, 'end'); });
-        latchQueue(); queueState(); return;
+        readableEnd = false; entryRequest = null;
+        const last = chapterQueue.at(-1);
+        chapterQueue.slice(0, -1).forEach(record => { if (record.phase !== 'done') finishRecord(record, true, 'end'); });
+        // A fast trip to the bottom still starts the footer with its logo.
+        if (last?.phase === 'waiting') begin(last, true);
+        else if (last && last.phase !== 'done') catchUp(last, time);
+        if (last && last.phase !== 'done') advance(last, time);
+        queueState(); return;
       }
       // Fast navigation may pass a chapter completely. Restore its readable final
       // state, but never turn that skip into permission to animate a future chapter.
       chapterQueue.forEach(record => {
         if (record.phase !== 'done' && record.element.getBoundingClientRect().bottom <= 0) finishRecord(record, true, 'passed');
       });
+      if (entryRequest && admitEntry(time)) { queueState(); return; }
       if (activeChapter) {
         const current = activeChapter;
         if (current.element.getBoundingClientRect().top > innerHeight * 1.2) finishRecord(current);
@@ -396,8 +475,8 @@
       if (disposed || document.hidden) return;
       update();
       const now = clock();
-      if ([...records.values()].some(record => record.phase === 'logo'
-        || record.phase === 'tracing' && (record.frameVisible || now - record.start < 500))) schedule();
+      if ((entryRequest && !activeChapter) || [...records.values()].some(record => record.phase === 'logo'
+        || record.phase === 'tracing' && (record.frameVisible || record.catchUpAt !== null || now - record.start < 500))) schedule();
     }
 
     function start() {
@@ -406,6 +485,12 @@
       started = true;
       if (!heroCompleted) { heroCompleted = true; latchQueue(); }
       records.forEach(record => { if (!record.config.dialog) arm(record); });
+      if (entryOnStart) {
+        const rapid = entryOnStart.rapid;
+        entryOnStart = false;
+        const record = enteredChapter();
+        if (record) entryRequest = { record, rapid };
+      }
       if ('IntersectionObserver' in window) {
         observer = new IntersectionObserver(schedule, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
         records.forEach(record => { if (!record.config.dialog) observer.observe(record.element); });
@@ -413,6 +498,7 @@
       schedule();
     }
     function showAll(options = {}) {
+      entryRequest = null; entryOnStart = false; scrollTrail = []; rapidUntil = -Infinity;
       chapterStatic = true;
       dialogsEnabled = options.keepDialogs !== false && !mandatoryStatic();
       observer?.disconnect();
@@ -441,12 +527,23 @@
     }
     function onScroll(event) {
       const now = performance.now(), position = scrollY, delta = position - lastScrollPosition;
+      if (delta < -.5) { entryRequest = null; entryOnStart = false; scrollTrail = []; rapidUntil = -Infinity; }
       if (delta > .5 && !overlayOpen() && !document.hidden) {
-        if (endRequested || (atBottom() && delta > innerHeight * .7)) readableEnd = true;
+        if (atBottom() && (endRequested || delta > innerHeight * .7)) readableEnd = true;
+        const continuingGesture = now - lastWheelAt < 220 || touchActive || scrollbarActive || pressedScrollKeys.size > 0
+          || (scrollTrail.length > 0 && now - lastScrollAt < 220);
+        const freshNativeScroll = event.isTrusted !== false && !continuingGesture
+          && now - lastScrollAt > 220 && now >= completedAt && now > fallbackSuppressedUntil;
+        if (!chapterStatic && (continuingGesture || freshNativeScroll)) {
+          const rapid = rapidScroll(delta, now);
+          if (activeChapter && (rapid || readingAhead(activeChapter))) catchUp(activeChapter, clock());
+          if (!started) entryOnStart = { rapid: rapid || !!entryOnStart?.rapid };
+          else {
+            const record = enteredChapter();
+            if (record) entryRequest = { record, rapid: rapid || (entryRequest?.record === record && entryRequest.rapid) };
+          }
+        }
         if (heroCompleted && !activeChapter && !chapterStatic) {
-          const continuingGesture = now - lastWheelAt < 220 || touchActive || scrollbarActive || pressedScrollKeys.size > 0;
-          const freshNativeScroll = event.isTrusted !== false && !continuingGesture
-            && now - lastScrollAt > 220 && now >= completedAt && now > fallbackSuppressedUntil;
           if (forwardRevision > completionRevision || freshNativeScroll) {
             if (freshNativeScroll && forwardRevision <= completionRevision) { intentRevision += 1; forwardRevision = intentRevision; }
             forwardPermit = true;
@@ -462,6 +559,7 @@
     }, { signal });
     addEventListener('wheel', event => {
       const now = performance.now(), direction = Math.sign(event.deltaY);
+      if (direction < 0) { entryRequest = null; entryOnStart = false; scrollTrail = []; rapidUntil = -Infinity; }
       const fresh = now - lastWheelAt > 220 || (direction > 0 && lastWheelDirection <= 0);
       lastWheelAt = now; lastWheelDirection = direction;
       if (direction > 0 && fresh) noteIntent();
@@ -469,6 +567,7 @@
     addEventListener('keydown', event => {
       if (event.defaultPrevented || event.target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
       if (event.key === ' ' && event.target?.closest?.('button, summary, a[href]')) return;
+      if (['ArrowUp', 'PageUp', 'Home'].includes(event.key)) { entryRequest = null; entryOnStart = false; scrollTrail = []; rapidUntil = -Infinity; }
       const forward = ['ArrowDown', 'PageDown', 'End', ' '].includes(event.key);
       if (!forward || overlayOpen()) return;
       pressedScrollKeys.add(event.code || event.key);
@@ -510,6 +609,7 @@
     addEventListener('scroll', onScroll, { passive: true, signal });
     dialog?.addEventListener('scroll', () => { if (dialogRecord?.phase === 'tracing') finishRecord(dialogRecord, false); }, { passive: true, signal });
     addEventListener('resize', () => {
+      entryRequest = null; entryOnStart = false; scrollTrail = []; rapidUntil = -Infinity;
       records.forEach(record => { if (['tracing', 'settling'].includes(record.phase)) finishRecord(record); });
       fallbackSuppressedUntil = performance.now() + 250;
       latchQueue();
@@ -548,6 +648,7 @@
     document.addEventListener('visibilitychange', () => document.hidden ? pause() : resume(), { signal });
     addEventListener('pageshow', event => { if (event.persisted) resume(); else schedule(); }, { signal });
     addEventListener('pagehide', event => {
+      entryRequest = null; entryOnStart = false; scrollTrail = []; rapidUntil = -Infinity;
       if (event.persisted) { pause(); return; }
       records.forEach(record => finishRecord(record, false));
       disposed = true; abort.abort(); observer?.disconnect(); dialogObserver?.disconnect();
