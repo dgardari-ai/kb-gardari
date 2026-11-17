@@ -7,16 +7,36 @@
   <meta name="theme-color" content="#dccb11">
   <title>Концепт бюро Гардари</title>
   <meta name="description" content="Авторская практика создания проектов. Связываем содержание, образ, человеческий опыт, технологии и хозяйство.">
+  <style>
+    body{margin:0;display:flow-root;background:var(--yellow,#dccb11)}
+    .page-shell{width:min(964px,calc(100vw - 32px));margin:12px auto 70px}
+    @media(max-width:760px){.page-shell{width:calc(100vw - 28px);margin:12px 14px 32px}}
+    html.js.intro-mode:not(.kb-motion-ready):not(.kb-motion-static) .page-shell{visibility:hidden}
+  </style>
   <script>
-    document.documentElement.classList.add('js');
-    if(!location.hash||['#top','#main'].includes(location.hash))document.documentElement.classList.add('intro-mode');
-    addEventListener('error',function(event){
-      var source=(event.target&&event.target.src)||event.filename||'';
-      if(source.indexOf('motion.js')!==-1){
-        document.documentElement.classList.remove('intro-mode');
-        document.documentElement.classList.add('kb-motion-static');
+    (function(){
+      var root=document.documentElement;
+      root.classList.add('js');
+      if(!location.hash||['#top','#main'].includes(location.hash))root.classList.add('intro-mode');
+      function readable(reason){
+        root.classList.remove('intro-mode');
+        root.classList.add('kb-motion-static','kb-motion-ready');
+        root.dataset.kbMotionFallback=reason;
+        if(window.KBRingReveal)window.KBRingReveal.finishAll();
+        if(window.KBChapterMotion)window.KBChapterMotion.showAll({keepDialogs:true});
       }
-    },true);
+      addEventListener('error',function(event){
+        var source=(event.target&&event.target.src)||event.filename||'';
+        if(source.indexOf('motion.js')!==-1)readable('script-error');
+      },true);
+      // Before deferred scripts arrive, a person's navigation still wins.
+      function earlyNavigation(){if(!root.classList.contains('kb-motion-ready'))readable('early-navigation');}
+      addEventListener('wheel',earlyNavigation,{passive:true,once:true});
+      addEventListener('touchmove',earlyNavigation,{passive:true,once:true});
+      addEventListener('keydown',function(event){if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' ','Tab'].includes(event.key))earlyNavigation();},{capture:true});
+      // A slow or stalled enhancement must never keep the authored page hidden.
+      setTimeout(function(){if(!root.classList.contains('kb-motion-ready'))readable('startup-timeout');},2500);
+    })();
   </script>
   <link rel="icon" href="assets/logo.svg?v=d2f1d4c4a04a" type="image/svg+xml">
   <link rel="stylesheet" href="assets/site.css?v=2b155bd70c45">
@@ -40,11 +60,11 @@
   <script src="app.js?v=6ffe3b70b583" defer></script>
   <script src="footer-actions.js?v=1698cb143714" defer></script>
   <script src="legal.js?v=56a8077650c5" defer></script>
-  <script src="sliders.js?v=190161bd8d33" defer></script>
-  <script src="situations-scroll.js?v=1a45e838212d" defer></script>
-  <script src="ring-reveal.js?v=8138c4a61cc2" defer></script>
+  <script src="sliders.js?v=01099bc0d679" defer></script>
+  <script src="situations-scroll.js?v=2e133ff04754" defer></script>
+  <script src="ring-reveal.js?v=e941ba24d284" defer></script>
   <script src="chapter-motion.js?v=e81c67bb7114" defer></script>
-  <script src="motion.js?v=d2d5ed9dcd10" defer></script>
+  <script src="motion.js?v=1d61d2c1da73" defer></script>
 </head>
 <body>
 <a href="#main" class="skip-link"><span class="type-line" data-kb2-field="prototype:/ui/skipLink" data-kb2-format="text" data-kb2-instance="prototype:/ui/skipLink#1">Перейти к содержанию<i class="baseline-marker" aria-hidden="true"></i></span></a>
@@ -55,7 +75,7 @@
     <div class="top-band" aria-hidden="true"></div>
     <p class="top-formula"><span class="type-line" data-kb2-field="prototype:/ui/topFormula" data-kb2-format="text" data-kb2-instance="prototype:/ui/topFormula#1">ПРАГМАТИКА / ПОЭТИКА / ЭСТЕТИКА<i class="baseline-marker" aria-hidden="true"></i></span></p>
     <button class="brand brand-hero" type="button" data-open-agent aria-label="Открыть окно агента КБ"><span class="brand-orb" aria-hidden="true"><img src="assets/brand-logo.svg?v=cec3e40fc9c1" alt=""></span><span class="brand-capsule"><span class="brand-copy"><span class="type-line" data-kb2-field="prototype:/ui/brandCopy" data-kb2-format="text" data-kb2-instance="prototype:/ui/brandCopy#1">... концепт бюро гардари ...<i class="baseline-marker" aria-hidden="true"></i></span></span></span></button>
-    <img class="hero-figure" src="assets/hero-figure.svg?v=05aa6713c6b7" alt="Портрет, проявляющийся сквозь кольцевой растр" fetchpriority="high">
+    <img class="hero-figure" src="assets/hero-figure-compact.svg?v=038024bf74bf" srcset="assets/hero-figure-compact.svg?v=038024bf74bf 510w, assets/hero-figure.svg?v=4e1241ffd965 1020w" sizes="(max-width:760px) 100px, 203px" data-ring-figure="hero-figure" alt="Портрет, проявляющийся сквозь кольцевой растр" fetchpriority="high" decoding="async">
     <p class="section-label"><span class="section-marker" aria-hidden="true"></span><span class="type-line" data-kb2-field="prototype:/ui/sectionLabels/top" data-kb2-format="text" data-kb2-instance="prototype:/ui/sectionLabels/top#1" data-kb2-projection="section-label">0.1 ... АВТОРСКАЯ ПРАКТИКА СОЗДАНИЯ ПРОЕКТОВ<i class="baseline-marker" aria-hidden="true"></i></span></p>
     <h1 id="hero-heading"><span class="type-line" data-kb2-field="prototype:/hero/heading/0" data-kb2-format="text" data-kb2-instance="prototype:/hero/heading/0#1">КАК ПРИЙТИ ОТ ЗАМЫСЛА<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/hero/heading/1" data-kb2-format="text" data-kb2-instance="prototype:/hero/heading/1#1">К РЕЗУЛЬТАТУ В ЭПОХУ ИИ ?<i class="baseline-marker" aria-hidden="true"></i></span></h1>
@@ -109,7 +129,7 @@
   </section>
 
   <section id="practice" class="practice chapter" aria-labelledby="practice-heading" data-address="0.4">
-    <img class="process-figure" src="assets/process-figure.svg?v=7c7fec7c70cf" alt="Фигура человека в кольцевом растре" loading="lazy">
+    <img class="process-figure" src="assets/process-figure-compact.svg?v=29529a135317" srcset="assets/process-figure-compact.svg?v=29529a135317 1020w, assets/process-figure.svg?v=2dfc0139ed1b 2040w" sizes="(max-width:760px) 110px, 290px" data-ring-figure="process-figure" alt="Фигура человека в кольцевом растре" loading="lazy" fetchpriority="low" decoding="async">
     <p class="section-label"><span class="section-marker" aria-hidden="true"></span><span class="type-line" data-kb2-field="prototype:/ui/sectionLabels/practice" data-kb2-format="text" data-kb2-instance="prototype:/ui/sectionLabels/practice#1" data-kb2-projection="section-label">0.4 ... СХЕМА РАБОТЫ НАД ПРОЕКТОМ<i class="baseline-marker" aria-hidden="true"></i></span></p>
     <h2 id="practice-heading"><span class="type-line" data-kb2-field="prototype:/practice/heading/0" data-kb2-format="text" data-kb2-instance="prototype:/practice/heading/0#1">КАК УСТРОЕН<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/practice/heading/1" data-kb2-format="text" data-kb2-instance="prototype:/practice/heading/1#1">ПРОЦЕСС РАБОТЫ<i class="baseline-marker" aria-hidden="true"></i></span><br>
@@ -162,7 +182,7 @@
   <section id="author" class="authors chapter" aria-label="Авторская основа" data-address="0.6">
     <img class="large-logo author-logo" src="assets/logo.svg?v=d2f1d4c4a04a" alt="КБ" width="160" height="133">
     <p class="section-label"><span class="section-marker" aria-hidden="true"></span><span class="type-line" data-kb2-field="prototype:/ui/sectionLabels/author" data-kb2-format="text" data-kb2-instance="prototype:/ui/sectionLabels/author#1" data-kb2-projection="section-label">0.6 ... АВТОРСКАЯ ОСНОВА<i class="baseline-marker" aria-hidden="true"></i></span></p>
-    <div class="author-rows"><article class="author-row author-denis" id="person-denis"><img class="author-portrait" src="assets/denis-portrait.svg?v=417e68b97458" alt="Рисованный портрет Дениса Гардари" loading="lazy"><div class="author-copy"><details class="author-bio"><summary><span class="author-plus" aria-hidden="true"><span class="type-line">+<i class="baseline-marker" aria-hidden="true"></i></span></span><h3><span class="type-line" data-kb2-field="prototype:/author/denis/heading" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/heading#1">ДЕНИС ГАРДАРИ<i class="baseline-marker" aria-hidden="true"></i></span></h3></summary><p class="author-intro"><span class="type-line" data-kb2-field="prototype:/author/denis/intro/0" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/intro/0#1">Более двадцати лет практики на пересечении<i class="baseline-marker" aria-hidden="true"></i></span><br>
+    <div class="author-rows"><article class="author-row author-denis" id="person-denis"><img class="author-portrait" src="assets/denis-portrait.svg?v=4651cbbdd3dc" srcset="assets/denis-portrait-compact.svg?v=27a58457003b 627w, assets/denis-portrait.svg?v=4651cbbdd3dc 1254w" sizes="(max-width:360px) 75vw, (max-width:760px) 58vw, 481px" decoding="async" alt="Рисованный портрет Дениса Гардари" loading="lazy"><div class="author-copy"><details class="author-bio"><summary><span class="author-plus" aria-hidden="true"><span class="type-line">+<i class="baseline-marker" aria-hidden="true"></i></span></span><h3><span class="type-line" data-kb2-field="prototype:/author/denis/heading" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/heading#1">ДЕНИС ГАРДАРИ<i class="baseline-marker" aria-hidden="true"></i></span></h3></summary><p class="author-intro"><span class="type-line" data-kb2-field="prototype:/author/denis/intro/0" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/intro/0#1">Более двадцати лет практики на пересечении<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/denis/intro/1" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/intro/1#1">научного, художественного, философского,<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/denis/intro/2" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/intro/2#1">культурного и проектного мышления.<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/denis/intro/3" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/intro/3#1">Участвует в разработке замысла и ключевых<i class="baseline-marker" aria-hidden="true"></i></span><br>
@@ -174,7 +194,7 @@
 <span class="type-line" data-kb2-field="prototype:/author/denis/terms/1" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/terms/1#1">философия<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/denis/terms/2" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/terms/2#1">методология<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/denis/terms/3" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/terms/3#1">культурология<i class="baseline-marker" aria-hidden="true"></i></span><br>
-<span class="type-line" data-kb2-field="prototype:/author/denis/terms/4" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/terms/4#1">дизайн<i class="baseline-marker" aria-hidden="true"></i></span></p></div></article><article class="author-row author-ivan" id="person-ivan"><img class="author-portrait" src="assets/ivan-portrait.svg?v=940abd8a5d16" alt="Рисованный портрет Ивана Трохина" loading="lazy"><div class="author-copy"><details class="author-bio"><summary><span class="author-plus" aria-hidden="true"><span class="type-line">+<i class="baseline-marker" aria-hidden="true"></i></span></span><h3><span class="type-line" data-kb2-field="prototype:/author/ivan/heading" data-kb2-format="text" data-kb2-instance="prototype:/author/ivan/heading#1">ИВАН ТРОХИН<i class="baseline-marker" aria-hidden="true"></i></span></h3></summary><p class="author-intro"><span class="type-line" data-kb2-field="prototype:/author/ivan/intro/0" data-kb2-format="text" data-kb2-instance="prototype:/author/ivan/intro/0#1">Более десяти лет работает с маркетингом,<i class="baseline-marker" aria-hidden="true"></i></span><br>
+<span class="type-line" data-kb2-field="prototype:/author/denis/terms/4" data-kb2-format="text" data-kb2-instance="prototype:/author/denis/terms/4#1">дизайн<i class="baseline-marker" aria-hidden="true"></i></span></p></div></article><article class="author-row author-ivan" id="person-ivan"><img class="author-portrait" src="assets/ivan-portrait.svg?v=26179612a21f" srcset="assets/ivan-portrait-compact.svg?v=c7cef1c868bf 627w, assets/ivan-portrait.svg?v=26179612a21f 1254w" sizes="(max-width:360px) 75vw, (max-width:760px) 58vw, 422px" decoding="async" alt="Рисованный портрет Ивана Трохина" loading="lazy"><div class="author-copy"><details class="author-bio"><summary><span class="author-plus" aria-hidden="true"><span class="type-line">+<i class="baseline-marker" aria-hidden="true"></i></span></span><h3><span class="type-line" data-kb2-field="prototype:/author/ivan/heading" data-kb2-format="text" data-kb2-instance="prototype:/author/ivan/heading#1">ИВАН ТРОХИН<i class="baseline-marker" aria-hidden="true"></i></span></h3></summary><p class="author-intro"><span class="type-line" data-kb2-field="prototype:/author/ivan/intro/0" data-kb2-format="text" data-kb2-instance="prototype:/author/ivan/intro/0#1">Более десяти лет работает с маркетингом,<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/ivan/intro/1" data-kb2-format="text" data-kb2-instance="prototype:/author/ivan/intro/1#1">рекламой, созданием и запуском продуктов.<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/ivan/intro/2" data-kb2-format="text" data-kb2-instance="prototype:/author/ivan/intro/2#1">Соединяет исследование аудитории,<i class="baseline-marker" aria-hidden="true"></i></span><br>
 <span class="type-line" data-kb2-field="prototype:/author/ivan/intro/3" data-kb2-format="text" data-kb2-instance="prototype:/author/ivan/intro/3#1">предложение, устройство продукта и<i class="baseline-marker" aria-hidden="true"></i></span><br>

@@ -40,6 +40,7 @@
 
   function init() {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const startupFallback = !!document.documentElement.dataset.kbMotionFallback;
     const abort = new AbortController();
     const signal = abort.signal;
     const states = new Map();
@@ -394,11 +395,13 @@
       const stickyContents = window.CSS?.supports?.('position', 'sticky') === true
         && window.CSS?.supports?.('display', 'contents') === true
         && window.CSS?.supports?.('display', 'grid') === true;
-      const fallback = reduced.matches ? 'reduced-motion' : editorMode() ? 'editor'
+      const fallback = startupFallback ? 'startup-fallback'
+        : reduced.matches ? 'reduced-motion' : editorMode() ? 'editor'
         : innerWidth <= 1024 ? 'narrow' : !detailsContents || !stickyContents ? 'unsupported-sticky-contents' : null;
       if (fallback) {
         setStackMode('static');
-        openProcessBodies();
+        // A late enhancement must preserve the native disclosure states a reader saw.
+        if (!startupFallback) openProcessBodies();
         stackMetrics = [];
         practice.dataset.processStackFallback = fallback;
         stackConfiguring = false;

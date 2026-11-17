@@ -62,8 +62,16 @@
     return node;
   }
   async function prepare(record, key) {
-    const [figures] = await Promise.all([mapReady, typeof record.node.decode === 'function' ? record.node.decode().catch(() => {}) : Promise.resolve()]);
+    let deadline;
+    const ready = await Promise.race([
+      Promise.all([mapReady, typeof record.node.decode === 'function' ? record.node.decode().catch(() => {}) : Promise.resolve()]),
+      new Promise(resolve => { deadline = setTimeout(() => resolve(null), 500); })
+    ]);
+    clearTimeout(deadline);
+    if (!ready) { restore(record, true); return; }
+    const [figures] = ready;
     if (record.done) return;
+    if (!record.node.complete || !record.node.naturalWidth) { restore(record, true); return; }
     const figure = figures?.[key];
     const box = record.node.getBoundingClientRect();
     if (!figure || box.width <= 1 || box.height <= 1 || staticMode()) { restore(record, true); return; }
@@ -111,7 +119,7 @@
     const existing = active.get(node);
     if (existing) return existing.promise;
     if (staticMode() || node.dataset.kbRingState === 'complete') return Promise.resolve({ completed: true });
-    const key = new URL(node.currentSrc || node.src, document.baseURI).pathname.split('/').at(-1)?.replace(/\.svg$/, '');
+    const key = node.dataset.ringFigure || new URL(node.currentSrc || node.src, document.baseURI).pathname.split('/').at(-1)?.replace(/\.svg$/, '');
     if (!['hero-figure', 'process-figure'].includes(key)) return Promise.resolve({ completed: true });
     const record = { node, start: null, overlay: null, cells: null, done: false,
       opacity: node.style.getPropertyValue('opacity'), opacityPriority: node.style.getPropertyPriority('opacity') };

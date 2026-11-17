@@ -593,7 +593,7 @@
       if (layoutFrame !== null) cancelAnimationFrame(layoutFrame);
     }
 
-    if (!main || !hero || !sciences || !rootHash(initialHash) || reduced.matches || editorActive()) {
+    if (!main || !hero || !sciences || !rootHash(initialHash) || reduced.matches || editorActive() || root.classList.contains('kb-motion-static')) {
       showAll({ resetPosition: true }); return;
     }
     if (hasScrolled) { showAll(); return; }
@@ -660,7 +660,9 @@
     editorObserver.observe(root, { attributes: true, attributeFilter: ['class'] });
     editorObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     signal.addEventListener('abort', () => editorObserver.disconnect(), { once: true });
-    Promise.resolve(document.fonts?.ready).then(() => {
+    // System fonts need no network gate. SVG/image readiness can hold fonts.ready
+    // until window.load; bound that wait without changing the entrance itself.
+    Promise.race([Promise.resolve(document.fonts?.ready), new Promise(resolve => setTimeout(resolve, 250))]).then(() => {
       if (!stopped && !staticMode) { centerScene(true); startEntrance(); }
     }).catch(() => showAll({ resetPosition: true }));
   }

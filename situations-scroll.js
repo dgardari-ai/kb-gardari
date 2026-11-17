@@ -26,6 +26,7 @@
     }));
     if (items.length !== 4 || items.some(s => !s.summary || !s.body || !s.content)) return;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const startupFallback = !!document.documentElement.dataset.kbMotionFallback;
     const abort = new AbortController(), signal = abort.signal;
     const originals = new Map();
     let metrics = [], context = null, mode = 'static', frame = null, layoutFrame = null;
@@ -86,7 +87,8 @@
       const supported = CSS.supports('selector(details::details-content)')
         && CSS.supports('position', 'sticky') && CSS.supports('display', 'contents')
         && CSS.supports('display', 'grid');
-      const reason = editorMode() ? 'editor' : reduced.matches ? 'reduced-motion'
+      const reason = startupFallback ? 'startup-fallback'
+        : editorMode() ? 'editor' : reduced.matches ? 'reduced-motion'
         : innerWidth <= 1024 ? 'narrow' : innerHeight < 640 ? 'short'
         : !supported ? 'unsupported-sticky-contents' : null;
       if (reason) { fallback(reason); configuring = false; return; }
