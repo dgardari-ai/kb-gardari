@@ -33,7 +33,7 @@
       author: { nodes: ':scope > .section-label, .author-logo, .author-row' },
       questions: { svg: '.faq-window .frame-skin', nodes: '.faq-window > .section-label, .faq-window > h2, .faq-item, .faq-contact' },
       contact: { svg: '.footer-window .frame-skin', logo: '.footer-logo', join: 'footer', topLogo: true, logoFirst: true,
-        nodes: '.brand-footer, .footer-terms, .footer-marker, .contact-card, .legal-footer' },
+        nodes: '.brand-footer, .footer-tool, .footer-resources h2, .footer-resources a, .contact-card, .legal-footer' },
       'agent-dialog': { svg: '.agent-window .frame-skin', logo: '.agent-logo', join: 'agent', dialog: true, traceSpeed: 2.1,
         nodes: '.agent-description, .agent-input, .agent-close' }
     };

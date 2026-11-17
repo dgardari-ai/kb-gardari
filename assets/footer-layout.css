@@ -1,0 +1,34 @@
+/* Author's live Affinity export, 17.11.2026; coordinates normalized to 964px. */
+.footer-tools{position:absolute;left:calc(94.835016 * var(--u));top:calc(179.395619 * var(--u));width:calc(197.367350 * var(--u));height:calc(56.286469 * var(--u))}
+.footer-tool{position:absolute;display:grid;place-items:center;width:calc(56.1655 * var(--u));height:calc(56.1655 * var(--u));border:var(--kb-line-width,1.5px) solid var(--ink);border-radius:50%;background:transparent;color:var(--ink);text-decoration:none;padding:0}
+.footer-tool-top{left:0;top:0}.footer-tool-share{left:calc(70.7625 * var(--u));top:calc(.120983 * var(--u))}.footer-tool-help{left:calc(141.201971 * var(--u));top:calc(.098852 * var(--u))}
+.footer-tool img{position:absolute;inset:calc(-1 * var(--kb-line-width,1.5px));width:calc(100% + 2 * var(--kb-line-width,1.5px));height:calc(100% + 2 * var(--kb-line-width,1.5px));max-width:none}
+.footer-tool:hover{background:rgb(0 0 0 / .07)}
+.footer-share-status{position:absolute;left:0;top:calc(63 * var(--u));width:calc(270 * var(--u));font-size:calc(11 * var(--u));line-height:1.2}
+.footer-share-status:empty{display:none}
+.footer-resources{position:absolute;left:calc(94.967863 * var(--u));top:calc(260 * var(--u));width:calc(270 * var(--u));height:calc(209 * var(--u));font-family:var(--serif);font-size:calc(16.559520 * var(--u));font-weight:400;letter-spacing:0}
+.footer-resources h2{position:absolute;left:calc(-.284537 * var(--u));top:calc(3.366384 * var(--u));font:600 calc(14.762002 * var(--u))/calc(20 * var(--u)) var(--semibold);white-space:nowrap}
+.footer-resources ul{margin:0;padding:0;list-style:none}
+.footer-resources li{position:static}
+.footer-resources a{position:absolute;left:0;top:calc((var(--resource-baseline) - 280.49465) * var(--u));width:100%;height:calc(30.456 * var(--u));line-height:calc(30.456 * var(--u));color:#262626;text-decoration:none;white-space:nowrap}
+.footer-resources a>.type-line{-webkit-text-stroke:calc(.3312 * var(--u)) var(--ink)}
+.footer-resources a:hover>.type-line{text-decoration:underline;text-underline-offset:.18em}
+.footer-resource-arrow{position:absolute;left:calc(258.236 * var(--u));top:calc(7.8 * var(--u));width:calc(9 * var(--u));height:calc(15 * var(--u));overflow:visible;fill:none;stroke:var(--ink);stroke-width:2.76;stroke-linecap:square;stroke-linejoin:miter}
+.footer .legal-footer{position:relative;display:block;height:calc(23 * var(--u));margin-top:calc(6.309 * var(--u));padding:0;font-size:calc(18.452233 * var(--u));letter-spacing:calc(-.35 * var(--u));white-space:nowrap}
+.footer .legal-footer>.legal-copyright,.footer .legal-footer>.legal-footer-link{position:absolute;top:0}
+.footer .legal-copyright{left:calc(110.028185 * var(--u))}
+.footer .legal-footer-link:nth-child(2){left:calc(297.348123 * var(--u))}
+.footer .legal-footer-link:nth-child(3){left:calc(641.938425 * var(--u))}
+.footer .legal-footer-link::before{position:absolute;right:100%;margin:0 calc(12.45 * var(--u)) 0 0}
+@media(max-width:760px){
+ .footer-tools{position:relative;inset:auto;width:200px;height:48px;display:flex;gap:16px;margin:0 0 28px}
+ .footer-tool{position:relative;inset:auto;width:48px;height:48px;flex:none}
+  .footer-share-status{top:55px;width:270px;font-size:11px}
+ .footer-resources{position:relative;inset:auto;width:100%;height:auto;font-size:16px;margin-bottom:28px}
+ .footer-resources h2{position:relative;inset:auto;font-size:14px;line-height:20px;margin-bottom:12px}
+ .footer-resources a{position:relative;inset:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;height:auto;width:100%;font-size:16px;line-height:1.3;white-space:normal;padding:9px 0}
+ .footer-resources a>.type-line{min-width:0;-webkit-text-stroke:.3px var(--ink)}
+ .footer-resource-arrow{position:static;flex:none;width:9px;height:15px}
+ .footer .legal-footer{position:relative;display:flex;height:auto;gap:8px 20px;margin:14px 14px 0;font-size:14px;letter-spacing:0;line-height:1.35;white-space:normal}
+ .footer .legal-footer>.legal-copyright,.footer .legal-footer>.legal-footer-link{position:static}
+}
